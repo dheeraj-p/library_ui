@@ -1,0 +1,30 @@
+{
+  "name": "STEP Books",
+  "short_name": "Books",
+  "start_url": "/",
+  "display": "standalone",
+  "scope": "/",
+  "description": "This Awesome application exists so that we don't lose books from our STEP library.",
+  "icons": [
+    {
+      "src": "icons/192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/512.png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "icons/128.png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "icons/96.png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "icons/64.png",
+      "sizes": "64x64"
+    }
+  ]
+}
