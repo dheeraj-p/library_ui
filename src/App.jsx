@@ -1,8 +1,13 @@
+import { useEffect } from 'react';
+import { useAuth } from './providers/auth';
+
 function App() {
+  const { user, signin, logout } = useAuth();
+
   return (
-    <>
-      <p>STEP Library</p>
-    </>
+    <div>
+      <button onClick={signin}>Signin with Google</button>
+    </div>
   );
 }
 
