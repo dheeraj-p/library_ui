@@ -30,7 +30,11 @@ const auth = getAuth(app);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthReady, setAuthReady] = useState(false);
 
+  useEffect(() => {
+    auth.authStateReady().then(() => setAuthReady(true));
+  }, []);
   useEffect(() => {
     return auth.onAuthStateChanged(setUser);
   }, []);
@@ -47,7 +51,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signin, logout }}>
+    <AuthContext.Provider value={{ user, signin, logout, isAuthReady }}>
       {children}
     </AuthContext.Provider>
   );
