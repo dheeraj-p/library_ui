@@ -1,24 +1,20 @@
 import { Logout } from '@mui/icons-material';
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
 import { useAuth } from '../providers/auth';
-import { useRole } from '../providers/role';
 
 const AppHeader = () => {
-  const { logout } = useAuth();
-  const userRole = useRole();
+  const { logout, user } = useAuth();
 
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          STEP Library ({userRole})
+          STEP Library
         </Typography>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="logout"
-          onClick={logout}
-        >
+        <Typography variant="body1" mr={4}>
+          {user.displayName}
+        </Typography>
+        <IconButton color="inherit" aria-label="logout" onClick={logout}>
           <Logout />
         </IconButton>
       </Toolbar>

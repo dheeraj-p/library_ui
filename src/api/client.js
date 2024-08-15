@@ -17,6 +17,11 @@ const getUserRole = async (token) => {
   return role;
 };
 
+const getAllBooks = async (token) => {
+  const response = await fetchWithAuth('/books', token);
+  return response.json();
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
@@ -29,6 +34,7 @@ const useAPI = () => {
 
   return {
     getUserRole: withAuth(getUserRole),
+    getAllBooks: withAuth(getAllBooks),
   };
 };
 
