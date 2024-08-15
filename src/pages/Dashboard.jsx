@@ -1,11 +1,13 @@
-import { useAuth } from '../providers/auth';
 import RequireAuth from '../components/RequireAuth';
 import AppHeader from '../components/AppHeader';
+import UserRoleProvider from '../providers/role';
 
 const Dashboard = () => {
   return (
     <RequireAuth>
-      <AppHeader />
+      <UserRoleProvider>
+        <AppHeader />
+      </UserRoleProvider>
     </RequireAuth>
   );
 };

@@ -7,8 +7,8 @@ import { CssBaseline } from '@mui/material';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <CssBaseline />
     <AuthProvider>
-      <CssBaseline />
       <RouterProvider router={router} />
     </AuthProvider>
   </React.StrictMode>
