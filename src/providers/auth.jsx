@@ -29,6 +29,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     auth.authStateReady().then(() => setAuthReady(true));
   }, []);
+
   useEffect(() => {
     return auth.onAuthStateChanged(setUser);
   }, []);

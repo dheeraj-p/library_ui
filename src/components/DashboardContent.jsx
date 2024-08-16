@@ -40,7 +40,7 @@ const DashboardContent = () => {
           />
           <BottomNavigationAction
             value="request-book"
-            label="Request a book"
+            label="Request"
             icon={<ListAlt />}
           />
         </BottomNavigation>

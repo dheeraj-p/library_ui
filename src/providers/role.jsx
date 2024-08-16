@@ -25,4 +25,4 @@ const useRole = () => useContext(UserRoleContext);
 
 export default UserRoleProvider;
 
-export { useRole };
+export { useRole, UserRoles };
