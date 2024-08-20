@@ -8,7 +8,7 @@ const Dashboard = () => {
   return (
     <RequireAuth>
       <UserRoleProvider>
-        <Box flexDirection="column" height="100vh" display="flex">
+        <Box flexDirection="column" height="100svh" display="flex">
           <AppHeader />
           <DashboardContent />
         </Box>

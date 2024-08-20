@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import {
+  browserPopupRedirectResolver,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
 
 const setupFirebase = () => {
   const firebaseConfig = {
@@ -36,7 +41,7 @@ const AuthProvider = ({ children }) => {
 
   const signin = ({ onSuccess, onError }) => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, provider, browserPopupRedirectResolver)
       .then(onSuccess ?? doNothing)
       .catch(onError ?? doNothing);
   };

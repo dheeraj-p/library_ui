@@ -18,9 +18,11 @@ const Row = ({ book }) => {
   return (
     <ListItem
       secondaryAction={
-        <IconButton aria-label="download">
-          <Download color="primary" />
-        </IconButton>
+        <AdminOnly>
+          <IconButton aria-label="download">
+            <Download color="primary" />
+          </IconButton>
+        </AdminOnly>
       }
     >
       <ListItemAvatar>

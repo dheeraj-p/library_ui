@@ -5,9 +5,14 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const AppHeader = () => {
   const { logout, user } = useAuth();
-  const canGoBack = window.history.state.idx !== 0;
   const navigate = useNavigate();
 
+  const nameInitials = user.displayName
+    .split(' ')
+    .map((p) => p[0])
+    .join('');
+
+  const canGoBack = window.history.state.idx !== 0;
   const goBack = () => {
     navigate(-1);
   };
@@ -41,7 +46,7 @@ const AppHeader = () => {
           STEP Library
         </Link>
         <Typography variant="body1" mr={1}>
-          {user.displayName}
+          {nameInitials}
         </Typography>
         <IconButton
           edge="end"
