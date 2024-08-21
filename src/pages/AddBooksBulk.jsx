@@ -13,15 +13,15 @@ import AppHeader from '../components/AppHeader';
 import { QrCodeScanner, Remove } from '@mui/icons-material';
 import { Virtuoso } from 'react-virtuoso';
 import { useState } from 'react';
-import BarcodeScanner from '../components/Scanner';
+import BarcodeScanner from '../components/BarcodeScanner';
 
-const BookItem = ({ isLastItem, isbn, copies }) => {
+const BookItem = ({ isLastItem, isbn, copies, onRemove }) => {
   const copiesText = copies > 1 ? 'copies' : 'copy';
   return (
     <>
       <ListItem
         secondaryAction={
-          <IconButton aria-label="remove">
+          <IconButton aria-label="remove" onClick={() => onRemove(isbn)}>
             <Remove color="primary" />
           </IconButton>
         }
@@ -61,6 +61,22 @@ const AddBooksBulk = () => {
     closeScanner();
   };
 
+  const removeISBN = (isbn) => {
+    if (!isbns.has(isbn)) return;
+
+    const isbnsCloned = new Map(isbns);
+
+    const count = isbnsCloned.get(isbn);
+    if (count == 1) {
+      isbnsCloned.delete(isbn);
+      setISBNs(isbnsCloned);
+      return;
+    }
+
+    isbnsCloned.set(isbn, count - 1);
+    setISBNs(isbnsCloned);
+  };
+
   const listItems = isbns.entries().toArray();
 
   return (
@@ -82,6 +98,7 @@ const AddBooksBulk = () => {
                     isbn={isbn}
                     copies={copies}
                     isLastItem={isLastItem}
+                    onRemove={removeISBN}
                   />
                 );
               }}
