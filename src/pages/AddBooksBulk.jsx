@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   Fab,
   IconButton,
@@ -14,6 +15,7 @@ import { QrCodeScanner, Remove } from '@mui/icons-material';
 import { Virtuoso } from 'react-virtuoso';
 import { useState } from 'react';
 import BarcodeScanner from '../components/BarcodeScanner';
+import useAPI from '../api/client';
 
 const BookItem = ({ isLastItem, isbn, copies, onRemove }) => {
   const copiesText = copies > 1 ? 'copies' : 'copy';
@@ -44,6 +46,7 @@ const BookItem = ({ isLastItem, isbn, copies, onRemove }) => {
 const AddBooksBulk = () => {
   const [isbns, setISBNs] = useState(new Map());
   const [isScannerOpened, setScannerOpened] = useState(false);
+  const { registerBooks } = useAPI();
 
   const openScanner = () => setScannerOpened(true);
   const closeScanner = () => {
@@ -77,6 +80,14 @@ const AddBooksBulk = () => {
     setISBNs(isbnsCloned);
   };
 
+  const displayRegistrationResults = (results) => {
+    console.log(results);
+  };
+
+  const addBooks = () => {
+    registerBooks(isbns).then(displayRegistrationResults);
+  };
+
   const listItems = isbns.entries().toArray();
 
   return (
@@ -103,6 +114,17 @@ const AddBooksBulk = () => {
                 );
               }}
             />
+            <Button
+              variant="outlined"
+              sx={{
+                mb: 2,
+                mr: 10,
+                ml: 2,
+              }}
+              onClick={addBooks}
+            >
+              Add Books
+            </Button>
             <Fab
               color="primary"
               sx={{ position: 'fixed', bottom: 10, right: 10 }}

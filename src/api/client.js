@@ -22,19 +22,32 @@ const getAllBooks = async (token) => {
   return response.json();
 };
 
+const registerBooks = async (token, isbnData) => {
+  const response = await fetchWithAuth('/books', token, {
+    method: 'POST',
+    body: JSON.stringify(isbnData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response.json();
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
   const withAuth = (apiCaller) => {
-    return async () => {
+    return async (...args) => {
       const token = await user.getIdToken();
-      return apiCaller(token);
+      return apiCaller(token, ...args);
     };
   };
 
   return {
     getUserRole: withAuth(getUserRole),
     getAllBooks: withAuth(getAllBooks),
+    registerBooks: withAuth(registerBooks),
   };
 };
 
