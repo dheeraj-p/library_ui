@@ -1,6 +1,6 @@
 import { useAuth } from '../providers/auth';
 
-const getBaseUrl = () => 'http://localhost:8787';
+const getBaseUrl = () => import.meta.env.VITE_API_URL;
 
 const fetchWithAuth = (url, token, options = {}) => {
   const baseUrl = getBaseUrl();
@@ -19,7 +19,14 @@ const getUserRole = async (token) => {
 
 const getAllBooks = async (token) => {
   const response = await fetchWithAuth('/books', token);
-  return response.json();
+
+  const books = await response.json();
+
+  return books.map((book) => {
+    //Converting authors separated by '|' to array in place (to save memory and time);
+    book.authors = book.authors.split('|');
+    return book;
+  });
 };
 
 const registerBooks = async (token, isbnData) => {
