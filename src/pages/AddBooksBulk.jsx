@@ -1,94 +1,127 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Fab,
-  IconButton,
-  ListItem,
-  ListItemText,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Fab, TextField, Typography } from '@mui/material';
 import RequireAuth from '../components/RequireAuth';
 import UserRoleProvider from '../providers/role';
 import AppHeader from '../components/AppHeader';
-import { QrCodeScanner, Remove } from '@mui/icons-material';
-import { Virtuoso } from 'react-virtuoso';
+import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
 import BarcodeScanner from '../components/BarcodeScanner';
 import useAPI from '../api/client';
+import { BookNotFoundError } from '../api/errors';
 
-const BookItem = ({ isLastItem, isbn, copies, onRemove }) => {
-  const copiesText = copies > 1 ? 'copies' : 'copy';
-  return (
-    <>
-      <ListItem
-        secondaryAction={
-          <IconButton aria-label="remove" onClick={() => onRemove(isbn)}>
-            <Remove color="primary" />
-          </IconButton>
-        }
-      >
-        <Typography
-          sx={{
-            mr: 2,
-            fontWeight: 'bold',
-          }}
-        >
-          ISBN
-        </Typography>
-        <ListItemText primary={`${isbn} (${copies} ${copiesText})`} />
-      </ListItem>
-      {!isLastItem ? <Divider aria-hidden="true" /> : <></>}
-    </>
-  );
+const textFieldStyle = {
+  mb: 2,
+};
+
+const formContainerStyle = {
+  pr: 2,
+  pl: 2,
+  pt: 2,
+  flexGrow: 1,
+};
+
+const formInitialData = {
+  title: '',
+  isbn10: '',
+  isbn13: '',
+  authors: [],
 };
 
 const AddBooksBulk = () => {
-  const [isbns, setISBNs] = useState(new Map());
   const [isScannerOpened, setScannerOpened] = useState(false);
-  const { registerBooks } = useAPI();
+  const [scannedISBN, setScannedISBN] = useState('');
+  const [alertData, setAlertData] = useState({
+    severity: 'info',
+    message: 'Please fill the form OR scan code',
+  });
+
+  const [bookData, setBookData] = useState(formInitialData);
+  const [numberOfCopies, setNumberOfCopies] = useState(1);
+  const { registerBook, fetchBookInfo } = useAPI();
 
   const openScanner = () => setScannerOpened(true);
   const closeScanner = () => {
     setScannerOpened(false);
   };
 
-  const addISBN = (isbn) => {
-    setISBNs((isbns) => {
-      const count = isbns.get(isbn) ?? 0;
-      isbns.set(isbn, count + 1);
-
-      return isbns;
-    });
-
-    closeScanner();
-  };
-
-  const removeISBN = (isbn) => {
-    if (!isbns.has(isbn)) return;
-
-    const isbnsCloned = new Map(isbns);
-
-    const count = isbnsCloned.get(isbn);
-    if (count == 1) {
-      isbnsCloned.delete(isbn);
-      setISBNs(isbnsCloned);
+  const handleError = (err) => {
+    if (err instanceof BookNotFoundError) {
+      setAlertData({
+        severity: 'warning',
+        message: "Can't fetch book details. Please add the book manually.",
+      });
       return;
     }
 
-    isbnsCloned.set(isbn, count - 1);
-    setISBNs(isbnsCloned);
+    setAlertData({
+      severity: 'error',
+      message: 'Ooops! Unknown error occured.',
+    });
+    console.warn('Unhanled error: ', err);
   };
 
-  const displayRegistrationResults = (results) => {
-    console.log(results);
+  const updateTitle = (e) => {
+    setBookData({ ...bookData, title: e.target.value });
   };
 
-  const addBooks = () => {
-    registerBooks(isbns).then(displayRegistrationResults);
+  const updateISBN10 = (e) => {
+    setBookData({ ...bookData, isbn10: e.target.value });
   };
 
-  const listItems = isbns.entries().toArray();
+  const updateISBN13 = (e) => {
+    setBookData({ ...bookData, isbn13: e.target.value });
+  };
+
+  const updateAuthors = (e) => {
+    setBookData({ ...bookData, authors: e.target.value.split(',') });
+  };
+
+  const processISBN = (isbn) => {
+    setAlertData({ severity: 'info', message: 'Fetching book data...' });
+    fetchBookInfo(isbn)
+      .then((bookData) => {
+        setScannedISBN(isbn);
+        setBookData(bookData);
+        setAlertData({
+          severity: 'success',
+          message: 'Please confirm book information and continue.',
+        });
+      })
+      .catch(handleError);
+    closeScanner();
+  };
+
+  const addBook = () => {
+    setAlertData({
+      severity: 'info',
+      message: 'Adding book to library...',
+    });
+    registerBook({
+      bookData,
+      isbn: scannedISBN,
+      copies: numberOfCopies,
+    })
+      .then(() => {
+        setAlertData({
+          severity: 'success',
+          message: 'Yayy! Book added to library.',
+        });
+        setBookData(formInitialData);
+      })
+      .catch(handleError);
+  };
+
+  const isFormDataValid = () => {
+    if (bookData.title?.length == 0) return false;
+    if (bookData.isbn10?.length == 0 && bookData.isbn13?.length == 0) {
+      return false;
+    }
+
+    if (numberOfCopies < 1) return false;
+
+    return true;
+  };
+
+  const shouldSubmit = isFormDataValid();
 
   return (
     <RequireAuth>
@@ -97,23 +130,54 @@ const AddBooksBulk = () => {
           <AppHeader />
           <Box flexGrow={1} display="flex" flexDirection="column">
             <Typography variant="h6" ml={2} mt={2}>
-              Add Books
+              Add Book
             </Typography>
-            <Virtuoso
-              totalCount={isbns.size}
-              itemContent={(index) => {
-                const [isbn, copies] = listItems[index];
-                const isLastItem = index + 1 == isbns.size;
-                return (
-                  <BookItem
-                    isbn={isbn}
-                    copies={copies}
-                    isLastItem={isLastItem}
-                    onRemove={removeISBN}
-                  />
-                );
-              }}
-            />
+            <Box component="form" autoComplete="off" sx={formContainerStyle}>
+              <Alert severity={alertData.severity} sx={{ mb: 2 }}>
+                {alertData.message}
+              </Alert>
+              <TextField
+                label="Title*"
+                variant="outlined"
+                value={bookData.title}
+                onChange={updateTitle}
+                fullWidth
+                sx={textFieldStyle}
+              />
+              <TextField
+                label="ISBN 10"
+                variant="outlined"
+                value={bookData.isbn10}
+                fullWidth
+                sx={textFieldStyle}
+                onChange={updateISBN10}
+              />
+              <TextField
+                label="ISBN 13"
+                variant="outlined"
+                value={bookData.isbn13}
+                fullWidth
+                sx={textFieldStyle}
+                onChange={updateISBN13}
+              />
+              <TextField
+                label="Authors (comma separated)"
+                variant="outlined"
+                value={bookData.authors?.join(',')}
+                fullWidth
+                sx={textFieldStyle}
+                onChange={updateAuthors}
+              />
+              <TextField
+                label="Number of copies"
+                type="number"
+                variant="outlined"
+                value={numberOfCopies}
+                fullWidth
+                sx={textFieldStyle}
+                onChange={(e) => setNumberOfCopies(+e.target.value)}
+              />
+            </Box>
             <Button
               variant="outlined"
               sx={{
@@ -121,9 +185,10 @@ const AddBooksBulk = () => {
                 mr: 10,
                 ml: 2,
               }}
-              onClick={addBooks}
+              disabled={!shouldSubmit}
+              onClick={addBook}
             >
-              Add Books
+              Add Book
             </Button>
             <Fab
               color="primary"
@@ -137,7 +202,7 @@ const AddBooksBulk = () => {
         <BarcodeScanner
           opened={isScannerOpened}
           onCancel={closeScanner}
-          onResult={addISBN}
+          onResult={processISBN}
         />
       </UserRoleProvider>
     </RequireAuth>

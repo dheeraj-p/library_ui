@@ -1,10 +1,12 @@
 import { useAuth } from '../providers/auth';
+import { APIFailedError, BookNotFoundError } from './errors';
 
-const getBaseUrl = () => import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+const BOOK_PROVIDER_URL = 'https://openlibrary.org';
 
 const fetchWithAuth = (url, token, options = {}) => {
-  const baseUrl = getBaseUrl();
-  return fetch(`${baseUrl}${url}`, {
+  return fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers: { Authorization: `Bearer ${token}`, ...options.headers },
   });
@@ -29,16 +31,35 @@ const getAllBooks = async (token) => {
   });
 };
 
-const registerBooks = async (token, isbnData) => {
+const registerBook = async (token, data) => {
   const response = await fetchWithAuth('/books', token, {
     method: 'POST',
-    body: JSON.stringify(isbnData),
+    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
+  if (!response.ok) {
+    throw APIFailedError("Couldn't add a new book");
+  }
+
   return response.json();
+};
+
+const fetchBookInfo = async (isbn) => {
+  const response = await fetch(`${API_BASE_URL}/isbn/${isbn}`);
+
+  if (response.status === 404) {
+    throw new BookNotFoundError();
+  }
+
+  if (!response.ok) {
+    throw new APIFailedError("Couldn't get book information");
+  }
+
+  const { book } = await response.json();
+  return book;
 };
 
 const useAPI = () => {
@@ -54,7 +75,8 @@ const useAPI = () => {
   return {
     getUserRole: withAuth(getUserRole),
     getAllBooks: withAuth(getAllBooks),
-    registerBooks: withAuth(registerBooks),
+    registerBook: withAuth(registerBook),
+    fetchBookInfo,
   };
 };
 

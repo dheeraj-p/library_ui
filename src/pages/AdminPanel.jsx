@@ -37,8 +37,8 @@ const AdminPanel = () => {
                     <LibraryAdd color="primary" fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Add Books"
-                    secondary="Add multiple books"
+                    primary="Add New Book"
+                    secondary="Allows adding multiple copies a new book"
                   />
                 </ListItemButton>
               </ListItem>
