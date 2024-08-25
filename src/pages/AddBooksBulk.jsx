@@ -80,7 +80,7 @@ const AddBooksBulk = () => {
     setAlertData({ severity: 'info', message: 'Fetching book data...' });
     fetchBookInfo(isbn)
       .then((bookData) => {
-        setBookData(bookData);
+        setBookData({ ...formInitialData, ...bookData });
         setAlertData({
           severity: 'success',
           message: 'Please confirm book information and continue.',
