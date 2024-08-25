@@ -63,7 +63,7 @@ const AllBooks = () => {
 
   const openSnackbar = (data) => {
     closeSnackbar();
-    setSnackbarData({ ...data, opened: true });
+    setSnackbarData({ ...data, opened: true, duration: 1500 });
   };
 
   const showWarning = (message) =>
