@@ -78,9 +78,11 @@ const CurrentlyReading = () => {
           components={{
             EmptyPlaceholder: () => {
               return (
-                <Typography variant="body1">
-                  You are not reading any book at the moment
-                </Typography>
+                <Box sx={containerStyle}>
+                  <Typography variant="body1">
+                    You are not reading any book at the moment
+                  </Typography>
+                </Box>
               );
             },
           }}
