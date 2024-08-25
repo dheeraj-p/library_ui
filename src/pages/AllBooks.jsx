@@ -61,27 +61,35 @@ const AllBooks = () => {
     setSnackbarData({ opened: false });
   };
 
+  const openSnackbar = (data) => {
+    closeSnackbar();
+    setSnackbarData({ ...data, opened: true });
+  };
+
+  const showWarning = (message) =>
+    openSnackbar({ message, severity: 'warning' });
+
+  const showError = (message) => openSnackbar({ message, severity: 'error' });
+  const showInfo = (message) => openSnackbar({ message, severity: 'info' });
+  const showSuccess = (message) =>
+    openSnackbar({ message, severity: 'success' });
+
   const handleError = (err) => {
     if (err instanceof CopyAlreadyBorrowed) {
-      closeSnackbar();
-      setSnackbarData({
-        opened: true,
-        severity: 'warning',
-        message: err.message,
-      });
+      showWarning(err.message);
+      return;
     }
+    showError('Oops! Unknown Error');
   };
 
   const processCopyId = (copyId) => {
-    setSnackbarData({
-      opened: true,
-      severity: 'info',
-      message: `Processing...`,
-    });
-
+    showInfo('Processing...');
     borrowBook(copyId)
-      .then((res) => {})
-      .catch();
+      .then((res) => {
+        showSuccess('Book borrowed, happy reading :)');
+      })
+      .catch(handleError);
+
     closeScanner();
   };
 
