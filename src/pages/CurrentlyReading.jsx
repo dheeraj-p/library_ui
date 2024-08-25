@@ -56,6 +56,7 @@ const CurrentlyReading = () => {
     fetchCurrentlyReadingBooks()
       .then((books) => {
         setBooks(books);
+        setMessageInfo({ visible: false });
       })
       .catch((_) => {
         setMessageInfo({
