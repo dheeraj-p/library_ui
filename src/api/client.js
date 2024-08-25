@@ -84,6 +84,17 @@ const borrowBook = async (token, copyId) => {
   return response.json();
 };
 
+const fetchCurrentlyReadingBooks = async (token) => {
+  const response = await fetchWithAuth('/my-books', token);
+  const books = await response.json();
+
+  return books.map((book) => {
+    //Converting authors separated by '|' to array in place (to save memory and time);
+    book.authors = book.authors.split('|');
+    return book;
+  });
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
@@ -99,6 +110,7 @@ const useAPI = () => {
     getAllBooks: withAuth(getAllBooks),
     registerBook: withAuth(registerBook),
     borrowBook: withAuth(borrowBook),
+    fetchCurrentlyReadingBooks: withAuth(fetchCurrentlyReadingBooks),
     fetchBookInfo,
   };
 };
