@@ -4,7 +4,7 @@
 - [x] Fetch and display currently reading book.
 - [x] Onboard new user on signin
 - [ ] Protect Admin only routes
-- [ ] Add scanner and UI to return book
+- [x] Add scanner and UI to return book
 - [ ] Display "all books" in a lazy-loading manner (use pagination internally)
 - [ ] Show full details of book in a new screen including, who all are reading that book
 - [ ] Add search field in "All books" screen to search by name
@@ -13,6 +13,8 @@
 - [ ] Create proper empty and error placeholders for screens where list of books are being rendered.
 - [ ] Create screen to change user roles
 - [ ] Avoid using `navigate` function from react-router-dom (They suggest something else). Also check why?
+- [ ] Make the login screen beautiful
+- [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 
 ### For Future
 

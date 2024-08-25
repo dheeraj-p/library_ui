@@ -113,6 +113,20 @@ const verifyAuth = async (token) => {
   if (!response.ok) APIFailedError('Could not verify authentication');
 };
 
+const returnBook = async (token, copyId) => {
+  const response = await fetchWithAuth('/transactions', token, {
+    method: 'PATCH',
+    body: JSON.stringify({ copyId }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) throw new APIFailedError("Couldn't return book!");
+
+  return response.json();
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
@@ -129,6 +143,7 @@ const useAPI = () => {
     registerBook: withAuth(registerBook),
     borrowBook: withAuth(borrowBook),
     fetchCurrentlyReadingBooks: withAuth(fetchCurrentlyReadingBooks),
+    returnBook: withAuth(returnBook),
     fetchBookInfo,
   };
 };

@@ -2,21 +2,28 @@ import { Virtuoso } from 'react-virtuoso';
 import useAPI from '../api/client';
 import { useEffect, useState } from 'react';
 import {
+  Alert,
   Box,
+  Fab,
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Snackbar,
   Typography,
 } from '@mui/material';
-import { MenuBook } from '@mui/icons-material';
+import { MenuBook, QrCodeScanner } from '@mui/icons-material';
 import { getRelativeTimeString } from '../utils/date';
+import BarcodeScanner from '../components/BarcodeScanner';
 
 const containerStyle = {
   height: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  position: 'relative',
 };
+
+const fabStyle = { mr: 1, mb: 1, position: 'absolute', right: 0, bottom: 0 };
 
 const Row = ({ book }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
@@ -49,9 +56,15 @@ const initialMessage = {
 const CurrentlyReading = () => {
   const [books, setBooks] = useState([]);
   const [messageInfo, setMessageInfo] = useState(initialMessage);
-  const { fetchCurrentlyReadingBooks } = useAPI();
+  const [isScannerOpened, setScannerOpened] = useState(false);
+  const [snackbarData, setSnackbarData] = useState({ opened: false });
+  const { fetchCurrentlyReadingBooks, returnBook } = useAPI();
 
   useEffect(() => {
+    loadBooks();
+  }, []);
+
+  const loadBooks = () => {
     setMessageInfo({ visible: true, content: 'Looking for your books...' });
     fetchCurrentlyReadingBooks()
       .then((books) => {
@@ -64,30 +77,87 @@ const CurrentlyReading = () => {
           content: 'Oops! Something went wrong :(',
         });
       });
-  }, []);
+  };
+
+  const openScanner = () => setScannerOpened(true);
+  const closeScanner = () => {
+    setScannerOpened(false);
+  };
+
+  const closeSnackbar = () => {
+    setSnackbarData({ opened: false });
+  };
+
+  const openSnackbar = (data) => {
+    closeSnackbar();
+    setSnackbarData({ ...data, opened: true, duration: 1500 });
+  };
+
+  const showError = (message) => openSnackbar({ message, severity: 'error' });
+  const showInfo = (message) => openSnackbar({ message, severity: 'info' });
+  const showSuccess = (message) =>
+    openSnackbar({ message, severity: 'success' });
+
+  const processCopyId = (copyId) => {
+    showInfo('Processing...');
+    returnBook(copyId)
+      .then((res) => {
+        showSuccess('Book returned, keep reading. :)');
+        loadBooks();
+      })
+      .catch((_) => showError('Oops! Unknown Error'));
+
+    closeScanner();
+  };
 
   return (
     <Box sx={containerStyle}>
       {messageInfo.visible ? (
         <Typography variant="body1">{messageInfo.content}</Typography>
       ) : (
-        <Virtuoso
-          style={{ flexGrow: 1 }}
-          totalCount={books.length}
-          itemContent={(index) => <Row book={books[index]} />}
-          components={{
-            EmptyPlaceholder: () => {
-              return (
-                <Box sx={containerStyle}>
-                  <Typography variant="body1">
-                    You are not reading any book at the moment
-                  </Typography>
-                </Box>
-              );
-            },
-          }}
-        />
+        <>
+          <Virtuoso
+            style={{ flexGrow: 1 }}
+            totalCount={books.length}
+            itemContent={(index) => <Row book={books[index]} />}
+            components={{
+              EmptyPlaceholder: () => {
+                return (
+                  <Box sx={containerStyle}>
+                    <Typography variant="body1">
+                      You are not reading any book at the moment
+                    </Typography>
+                  </Box>
+                );
+              },
+            }}
+          />
+          {books.length > 0 && (
+            <Fab
+              color="primary"
+              variant="extended"
+              sx={fabStyle}
+              onClick={openScanner}
+            >
+              <QrCodeScanner sx={{ mr: 1 }} />
+              Return
+            </Fab>
+          )}
+        </>
       )}
+
+      <BarcodeScanner
+        opened={isScannerOpened}
+        onCancel={closeScanner}
+        onResult={processCopyId}
+      />
+      <Snackbar
+        open={snackbarData.opened}
+        autoHideDuration={snackbarData.duration}
+        onClose={closeSnackbar}
+      >
+        <Alert severity={snackbarData.severity}>{snackbarData.message}</Alert>
+      </Snackbar>
     </Box>
   );
 };
