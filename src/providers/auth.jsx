@@ -60,6 +60,7 @@ const AuthProvider = ({ children }) => {
 
   const signin = ({ onSuccess, onError }) => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     signInWithPopup(auth, provider, browserPopupRedirectResolver)
       .then(onSuccess ?? doNothing)
       .catch(onError ?? doNothing);
