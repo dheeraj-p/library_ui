@@ -4,10 +4,22 @@ class BookNotFoundError extends Error {
   }
 }
 
+class CopyAlreadyBorrowed extends Error {
+  constructor() {
+    super('This book is already taken!');
+  }
+}
+
+class CopyNotFound extends Error {
+  constructor() {
+    super('Could not find registered copy!');
+  }
+}
+
 class APIFailedError extends Error {
   constructor(message) {
     super(`API Error: ${message}`);
   }
 }
 
-export { BookNotFoundError, APIFailedError };
+export { BookNotFoundError, APIFailedError, CopyAlreadyBorrowed, CopyNotFound };

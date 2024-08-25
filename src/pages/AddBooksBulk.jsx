@@ -7,6 +7,16 @@ import { useState } from 'react';
 import BarcodeScanner from '../components/BarcodeScanner';
 import useAPI from '../api/client';
 import { BookNotFoundError } from '../api/errors';
+import ValidatedTextField from '../components/ValidatedTextField';
+import {
+  isNotEmpty,
+  isEmpty,
+  validateBookTitle,
+  validateISBN10,
+  validateISBN13,
+  isValidISBN10,
+  isValidISBN13,
+} from '../utils/validators';
 
 const textFieldStyle = {
   mb: 2,
@@ -28,14 +38,13 @@ const formInitialData = {
 
 const AddBooksBulk = () => {
   const [isScannerOpened, setScannerOpened] = useState(false);
-  const [scannedISBN, setScannedISBN] = useState('');
   const [alertData, setAlertData] = useState({
     severity: 'info',
     message: 'Please fill the form OR scan code',
   });
 
   const [bookData, setBookData] = useState(formInitialData);
-  const [numberOfCopies, setNumberOfCopies] = useState(1);
+  const [numberOfCopies, setNumberOfCopies] = useState('');
   const { registerBook, fetchBookInfo } = useAPI();
 
   const openScanner = () => setScannerOpened(true);
@@ -59,16 +68,8 @@ const AddBooksBulk = () => {
     console.warn('Unhanled error: ', err);
   };
 
-  const updateTitle = (e) => {
-    setBookData({ ...bookData, title: e.target.value });
-  };
-
-  const updateISBN10 = (e) => {
-    setBookData({ ...bookData, isbn10: e.target.value });
-  };
-
-  const updateISBN13 = (e) => {
-    setBookData({ ...bookData, isbn13: e.target.value });
+  const updateBookData = (partialData) => {
+    setBookData({ ...bookData, ...partialData });
   };
 
   const updateAuthors = (e) => {
@@ -79,7 +80,6 @@ const AddBooksBulk = () => {
     setAlertData({ severity: 'info', message: 'Fetching book data...' });
     fetchBookInfo(isbn)
       .then((bookData) => {
-        setScannedISBN(isbn);
         setBookData(bookData);
         setAlertData({
           severity: 'success',
@@ -97,7 +97,6 @@ const AddBooksBulk = () => {
     });
     registerBook({
       bookData,
-      isbn: scannedISBN,
       copies: numberOfCopies,
     })
       .then(() => {
@@ -106,13 +105,14 @@ const AddBooksBulk = () => {
           message: 'Yayy! Book added to library.',
         });
         setBookData(formInitialData);
+        setNumberOfCopies('');
       })
       .catch(handleError);
   };
 
   const isFormDataValid = () => {
-    if (bookData.title?.length == 0) return false;
-    if (bookData.isbn10?.length == 0 && bookData.isbn13?.length == 0) {
+    if (isEmpty(bookData.title)) return false;
+    if (!(isValidISBN10(bookData.isbn10) || isValidISBN13(bookData.isbn13))) {
       return false;
     }
 
@@ -136,33 +136,38 @@ const AddBooksBulk = () => {
               <Alert severity={alertData.severity} sx={{ mb: 2 }}>
                 {alertData.message}
               </Alert>
-              <TextField
+              <ValidatedTextField
                 label="Title*"
-                variant="outlined"
                 value={bookData.title}
-                onChange={updateTitle}
+                validator={validateBookTitle}
+                onChange={(title) => updateBookData({ title })}
                 fullWidth
                 sx={textFieldStyle}
               />
-              <TextField
+              <ValidatedTextField
                 label="ISBN 10"
-                variant="outlined"
                 value={bookData.isbn10}
                 fullWidth
                 sx={textFieldStyle}
-                onChange={updateISBN10}
+                validator={(v) => {
+                  if (isNotEmpty(bookData.isbn13) && isEmpty(v)) return;
+                  return validateISBN10(v);
+                }}
+                onChange={(isbn10) => updateBookData({ isbn10 })}
               />
-              <TextField
+              <ValidatedTextField
                 label="ISBN 13"
-                variant="outlined"
                 value={bookData.isbn13}
                 fullWidth
                 sx={textFieldStyle}
-                onChange={updateISBN13}
+                validator={(v) => {
+                  if (isNotEmpty(bookData.isbn10) && isEmpty(v)) return;
+                  return validateISBN13(v);
+                }}
+                onChange={(isbn13) => updateBookData({ isbn13 })}
               />
               <TextField
                 label="Authors (comma separated)"
-                variant="outlined"
                 value={bookData.authors?.join(',')}
                 fullWidth
                 sx={textFieldStyle}
@@ -171,9 +176,9 @@ const AddBooksBulk = () => {
               <TextField
                 label="Number of copies"
                 type="number"
-                variant="outlined"
                 value={numberOfCopies}
                 fullWidth
+                inputProps={{ min: 1 }}
                 sx={textFieldStyle}
                 onChange={(e) => setNumberOfCopies(+e.target.value)}
               />

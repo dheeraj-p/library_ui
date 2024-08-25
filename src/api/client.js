@@ -1,9 +1,12 @@
 import { useAuth } from '../providers/auth';
-import { APIFailedError, BookNotFoundError } from './errors';
+import {
+  APIFailedError,
+  BookNotFoundError,
+  CopyAlreadyBorrowed,
+  CopyNotFound,
+} from './errors';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-const BOOK_PROVIDER_URL = 'https://openlibrary.org';
 
 const fetchWithAuth = (url, token, options = {}) => {
   return fetch(`${API_BASE_URL}${url}`, {
@@ -41,7 +44,7 @@ const registerBook = async (token, data) => {
   });
 
   if (!response.ok) {
-    throw APIFailedError("Couldn't add a new book");
+    throw new APIFailedError("Couldn't add a new book");
   }
 
   return response.json();
@@ -62,6 +65,25 @@ const fetchBookInfo = async (isbn) => {
   return book;
 };
 
+const borrowBook = async (token, copyId) => {
+  const response = await fetchWithAuth('/transactions', token, {
+    method: 'POST',
+    body: JSON.stringify({ copyId }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  switch (response.status) {
+    case 409:
+      throw new CopyAlreadyBorrowed();
+    case 404:
+      throw new CopyNotFound();
+  }
+
+  return response.json();
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
@@ -76,6 +98,7 @@ const useAPI = () => {
     getUserRole: withAuth(getUserRole),
     getAllBooks: withAuth(getAllBooks),
     registerBook: withAuth(registerBook),
+    borrowBook: withAuth(borrowBook),
     fetchBookInfo,
   };
 };
