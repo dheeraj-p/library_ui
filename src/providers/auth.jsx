@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
+import { verifyAuth } from '../api/client';
 
 const setupFirebase = () => {
   const firebaseConfig = {
@@ -30,13 +31,31 @@ const auth = getAuth(app);
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthReady, setAuthReady] = useState(false);
+  const [isDomainVerified, setDomainVerified] = useState(false);
 
   useEffect(() => {
     auth.authStateReady().then(() => setAuthReady(true));
   }, []);
 
   useEffect(() => {
-    return auth.onAuthStateChanged(setUser);
+    return auth.onAuthStateChanged((user) => {
+      if (!user) {
+        setUser(null);
+        return;
+      }
+
+      user
+        .getIdToken()
+        .then(verifyAuth)
+        .then(() => {
+          setUser(user);
+          setDomainVerified(true);
+        })
+        .catch((err) => {
+          logout();
+          console.error(err);
+        });
+    });
   }, []);
 
   const signin = ({ onSuccess, onError }) => {
@@ -51,7 +70,16 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signin, logout, isAuthReady }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        signin,
+        logout,
+        isAuthReady,
+        isDomainVerified,
+        setDomainVerified,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

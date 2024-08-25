@@ -4,6 +4,7 @@ import {
   BookNotFoundError,
   CopyAlreadyBorrowed,
   CopyNotFound,
+  UnknownDomainError,
 } from './errors';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -24,6 +25,8 @@ const getUserRole = async (token) => {
 
 const getAllBooks = async (token) => {
   const response = await fetchWithAuth('/books', token);
+
+  if (!response.ok) throw new APIFailedError('Oops! Something went wrong.');
 
   const books = await response.json();
 
@@ -95,6 +98,21 @@ const fetchCurrentlyReadingBooks = async (token) => {
   });
 };
 
+const registerUser = async (token) => {
+  const response = await fetchWithAuth('/users', token, {
+    method: 'POST',
+  });
+
+  if (response.status === 403) throw new UnknownDomainError();
+  if (!response.ok) APIFailedError('Could not register the user');
+};
+
+const verifyAuth = async (token) => {
+  const response = await fetchWithAuth('/verify', token);
+  if (response.status === 403) throw new UnknownDomainError();
+  if (!response.ok) APIFailedError('Could not verify authentication');
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
@@ -116,3 +134,4 @@ const useAPI = () => {
 };
 
 export default useAPI;
+export { registerUser, verifyAuth };

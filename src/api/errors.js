@@ -22,4 +22,16 @@ class APIFailedError extends Error {
   }
 }
 
-export { BookNotFoundError, APIFailedError, CopyAlreadyBorrowed, CopyNotFound };
+class UnknownDomainError extends Error {
+  constructor() {
+    super(`Please login with allowed account only.`);
+  }
+}
+
+export {
+  BookNotFoundError,
+  APIFailedError,
+  CopyAlreadyBorrowed,
+  CopyNotFound,
+  UnknownDomainError,
+};

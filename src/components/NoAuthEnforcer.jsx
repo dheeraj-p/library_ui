@@ -2,11 +2,11 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../providers/auth';
 
 const NoAuthEnforcer = ({ children }) => {
-  const { isAuthReady, user } = useAuth();
+  const { isAuthReady, user, isDomainVerified } = useAuth();
 
   if (!isAuthReady) return <div>Loading App...</div>;
 
-  if (user) return <Navigate to={'/'} replace />;
+  if (user && isDomainVerified) return <Navigate to={'/'} replace />;
 
   return <>{children}</>;
 };

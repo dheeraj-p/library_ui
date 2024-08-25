@@ -49,7 +49,9 @@ const AllBooks = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllBooks().then(setBooks);
+    getAllBooks()
+      .then(setBooks)
+      .catch(() => showError('Oops! something went wrong.'));
   }, []);
 
   const openScanner = () => setScannerOpened(true);
