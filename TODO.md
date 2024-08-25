@@ -10,6 +10,7 @@
 - [ ] Add search field in "All books" screen to search by name
 - [ ] Only allow TW domain in authentication
 - [ ] Return cancel signal for API calls in useEffect hook
+- [ ] Create proper empty and error placeholders for screens where list of books are being rendered.
 
 ### For Future
 

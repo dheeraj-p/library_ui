@@ -41,28 +41,48 @@ const Row = ({ book }) => {
   );
 };
 
+const initialMessage = {
+  visible: false,
+  content: '',
+};
+
 const CurrentlyReading = () => {
   const [books, setBooks] = useState([]);
-  const [placeholder, setPlaceholder] = useState('Getting your books...');
+  const [messageInfo, setMessageInfo] = useState(initialMessage);
   const { fetchCurrentlyReadingBooks } = useAPI();
 
   useEffect(() => {
+    setMessageInfo({ visible: true, content: 'Looking for your books...' });
     fetchCurrentlyReadingBooks()
-      .then(setBooks)
+      .then((books) => {
+        setBooks(books);
+      })
       .catch((_) => {
-        setPlaceholder('Oops! Something went wrong :(');
+        setMessageInfo({
+          visible: true,
+          content: 'Oops! Something went wrong :(',
+        });
       });
   }, []);
 
   return (
     <Box sx={containerStyle}>
-      {books.length === 0 ? (
-        <Typography variant="body1">{placeholder}</Typography>
+      {messageInfo.visible ? (
+        <Typography variant="body1">{messageInfo.content}</Typography>
       ) : (
         <Virtuoso
           style={{ flexGrow: 1 }}
           totalCount={books.length}
           itemContent={(index) => <Row book={books[index]} />}
+          components={{
+            EmptyPlaceholder: () => {
+              return (
+                <Typography variant="body1">
+                  You are not reading any book at the moment
+                </Typography>
+              );
+            },
+          }}
         />
       )}
     </Box>
