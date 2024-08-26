@@ -21,7 +21,10 @@ const QRItem = ({ copy }) => {
   }, []);
 
   return (
-    <Box component="figure" sx={{ width: 200, m: 0, mb: 2 }}>
+    <Box
+      component="figure"
+      sx={{ width: 200, m: 0, mb: 2, border: '1px solid' }}
+    >
       <img ref={canvasRef} style={{ border: '1px solid' }} />
       <Typography component="figcaption" variant="caption">
         {copy.title}
@@ -94,6 +97,7 @@ const QRCodes = () => {
                     style={{
                       display: 'flex',
                       flexWrap: 'wrap',
+                      // gap: '6px',
                     }}
                   >
                     {children}
