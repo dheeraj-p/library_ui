@@ -10,7 +10,7 @@ import AppHeader from '../components/AppHeader';
 import { formatForInput } from '../utils/date';
 import useAPI from '../api/client';
 
-const QRItem = ({ copy }) => {
+const QRItem = ({ copy, index }) => {
   const canvasRef = useRef();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const QRItem = ({ copy }) => {
     >
       <img ref={canvasRef} style={{ border: '1px solid' }} />
       <Typography component="figcaption" variant="caption">
-        {copy.title}
+        {index}) {copy.title}
       </Typography>
     </Box>
   );
@@ -97,14 +97,16 @@ const QRCodes = () => {
                     style={{
                       display: 'flex',
                       flexWrap: 'wrap',
-                      // gap: '6px',
+                      ...style,
                     }}
                   >
                     {children}
                   </div>
                 )),
               }}
-              itemContent={(index) => <QRItemMemoised copy={copies[index]} />}
+              itemContent={(index) => (
+                <QRItemMemoised copy={copies[index]} index={index} />
+              )}
             />
           </Box>
         </Box>
