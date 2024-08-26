@@ -13,10 +13,11 @@
 - [ ] Create proper empty and error placeholders for screens where list of books are being rendered.
 - [ ] Create screen to change user roles
 - [ ] Avoid using `navigate` function from react-router-dom (They suggest something else). Also check why?
-- [ ] Make the login screen beautiful
+- [x] Make the login screen beautiful
+- [ ] Find a good background for login screen
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 
 ### For Future
 
-- [ ] Refactor screens and figure out how react router can be used effectively.
+- [ ] Refactor screens and figure out how react router can be used effectively (Probably use router loaders to fetch the initial config before actually rendering the application).
 - [ ] Avoid fetching user role and initial authentication data on Admin Panel.
