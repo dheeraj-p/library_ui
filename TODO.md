@@ -3,7 +3,10 @@
 - [x] Implement feature to borrow books
 - [x] Fetch and display currently reading book.
 - [x] Onboard new user on signin
+- [x] Create screen to display printable QR codes of book
+- [x] Add border around QR code
 - [ ] Protect Admin only routes
+- [ ] Trim values before sending to API calls
 - [x] Add scanner and UI to return book
 - [ ] Display "all books" in a lazy-loading manner (use pagination internally)
 - [ ] Show full details of book in a new screen including, who all are reading that book

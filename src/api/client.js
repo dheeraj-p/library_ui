@@ -127,6 +127,14 @@ const returnBook = async (token, copyId) => {
   return response.json();
 };
 
+const fetchCopies = async (token, from, to) => {
+  const params = new URLSearchParams({ from, to });
+  const response = await fetchWithAuth(`/copies?${params.toString()}`, token);
+
+  if (!response.ok) throw new APIFailedError("Couldn't fetch copies!");
+  return response.json();
+};
+
 const useAPI = () => {
   const { user } = useAuth();
 
@@ -144,6 +152,7 @@ const useAPI = () => {
     borrowBook: withAuth(borrowBook),
     fetchCurrentlyReadingBooks: withAuth(fetchCurrentlyReadingBooks),
     returnBook: withAuth(returnBook),
+    fetchCopies: withAuth(fetchCopies),
     fetchBookInfo,
   };
 };

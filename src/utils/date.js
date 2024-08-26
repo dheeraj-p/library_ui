@@ -16,4 +16,14 @@ const getRelativeTimeString = (d1, d2 = new Date()) => {
       return rtf.format(Math.round(elapsed / units[unit]), unit);
 };
 
-export { getRelativeTimeString };
+const formatForInput = (d) => {
+  const year = d.getFullYear();
+  const pad = (n) => n.toString().padStart(2, '0');
+
+  const month = pad(d.getMonth() + 1);
+  const date = pad(d.getDate());
+
+  return `${year}-${month}-${date}`;
+};
+
+export { getRelativeTimeString, formatForInput };

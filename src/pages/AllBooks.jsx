@@ -15,7 +15,7 @@ import { ManageAccounts, MenuBook, QrCodeScanner } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../components/BarcodeScanner';
-import { CopyAlreadyBorrowed } from '../api/errors';
+import { CopyAlreadyBorrowed, CopyNotFound } from '../api/errors';
 
 const Row = ({ book }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
@@ -81,6 +81,12 @@ const AllBooks = () => {
       showWarning(err.message);
       return;
     }
+
+    if (err instanceof CopyNotFound) {
+      showWarning(err.message);
+      return;
+    }
+
     showError('Oops! Unknown Error');
   };
 
