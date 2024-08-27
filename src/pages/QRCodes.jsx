@@ -1,14 +1,26 @@
-import { forwardRef, memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { QrCode } from '@mui/icons-material';
 import QRCode from 'qrcode';
-import { VirtuosoGrid } from 'react-virtuoso';
 
 import RequireAuth from '../components/RequireAuth';
 import UserRoleProvider from '../providers/role';
 import AppHeader from '../components/AppHeader';
 import { formatForInput } from '../utils/date';
 import useAPI from '../api/client';
+
+const qrContainerStyle = {
+  width: 200,
+  height: 220,
+  m: 0,
+  mb: 2,
+  border: '1px solid',
+  display: 'flex',
+  justifyContent: 'space-evenly',
+  flexDirection: 'column',
+  textAlign: 'center',
+  alignItems: 'center',
+};
 
 const QRItem = ({ copy, index }) => {
   const canvasRef = useRef();
@@ -20,14 +32,14 @@ const QRItem = ({ copy, index }) => {
     })();
   }, []);
 
+  const { title } = copy;
+  const titleToRender = title.length > 50 ? `${title.slice(0, 50)}...` : title;
+
   return (
-    <Box
-      component="figure"
-      sx={{ width: 200, m: 0, mb: 2, border: '1px solid' }}
-    >
+    <Box component="figure" sx={qrContainerStyle}>
       <img ref={canvasRef} style={{ border: '1px solid' }} />
       <Typography component="figcaption" variant="caption">
-        {index}) {copy.title}
+        {index + 1}: {titleToRender}
       </Typography>
     </Box>
   );
@@ -87,27 +99,11 @@ const QRCodes = () => {
             </>
           )}
           <Box pl={2} pr={2} flexGrow={1} mt={4}>
-            <VirtuosoGrid
-              totalCount={copies.length}
-              components={{
-                List: forwardRef(({ style, children, ...props }, ref) => (
-                  <div
-                    ref={ref}
-                    {...props}
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      ...style,
-                    }}
-                  >
-                    {children}
-                  </div>
-                )),
-              }}
-              itemContent={(index) => (
-                <QRItemMemoised copy={copies[index]} index={index} />
-              )}
-            />
+            <Stack direction="row" flexWrap="wrap" gap={1}>
+              {copies.map((copy, index) => (
+                <QRItemMemoised copy={copy} index={index} />
+              ))}
+            </Stack>
           </Box>
         </Box>
       </UserRoleProvider>

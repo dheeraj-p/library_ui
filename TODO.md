@@ -19,6 +19,7 @@
 - [x] Make the login screen beautiful
 - [ ] Find a good background for login screen
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
+- [ ] Admin feature to scan any book and fetch the information about book
 
 ### For Future
 
