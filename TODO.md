@@ -5,6 +5,7 @@
 - [x] Onboard new user on signin
 - [x] Create screen to display printable QR codes of book
 - [x] Add border around QR code
+- [x] Add title in the QR code
 - [ ] Protect Admin only routes
 - [ ] Trim values before sending to API calls
 - [x] Add scanner and UI to return book

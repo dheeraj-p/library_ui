@@ -11,7 +11,7 @@ import useAPI from '../api/client';
 
 const qrContainerStyle = {
   width: 200,
-  height: 220,
+  height: 240,
   m: 0,
   mb: 2,
   border: '1px solid',
@@ -24,21 +24,20 @@ const qrContainerStyle = {
 
 const QRItem = ({ copy, index }) => {
   const canvasRef = useRef();
+  const { title, copy_id } = copy;
+  const titleToRender = title.length > 50 ? `${title.slice(0, 50)}...` : title;
 
   useEffect(() => {
     (async () => {
-      const uri = await QRCode.toDataURL(copy.copy_id);
+      const uri = await QRCode.toDataURL(`${copy_id}||${titleToRender}`);
       canvasRef.current.src = uri;
     })();
   }, []);
 
-  const { title } = copy;
-  const titleToRender = title.length > 50 ? `${title.slice(0, 50)}...` : title;
-
   return (
     <Box component="figure" sx={qrContainerStyle}>
-      <img ref={canvasRef} style={{ border: '1px solid' }} />
-      <Typography component="figcaption" variant="caption">
+      <img ref={canvasRef} style={{ width: 190 }} />
+      <Typography component="figcaption" variant="caption" fontWeight="bold">
         {index + 1}: {titleToRender}
       </Typography>
     </Box>

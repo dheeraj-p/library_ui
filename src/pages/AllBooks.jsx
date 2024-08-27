@@ -90,8 +90,9 @@ const AllBooks = () => {
     showError('Oops! Unknown Error');
   };
 
-  const processCopyId = (copyId) => {
+  const processCopyId = (qrData) => {
     showInfo('Processing...');
+    const [copyId] = qrData.split('||');
     borrowBook(copyId)
       .then((res) => {
         showSuccess('Book borrowed, happy reading :)');

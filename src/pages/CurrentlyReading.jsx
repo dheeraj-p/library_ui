@@ -98,8 +98,9 @@ const CurrentlyReading = () => {
   const showSuccess = (message) =>
     openSnackbar({ message, severity: 'success' });
 
-  const processCopyId = (copyId) => {
+  const processCopyId = (qrData) => {
     showInfo('Processing...');
+    const [copyId] = qrData.split('||');
     returnBook(copyId)
       .then((res) => {
         showSuccess('Book returned, keep reading. :)');
