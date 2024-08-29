@@ -10,7 +10,7 @@ export const Route = createRootRoute({
     <>
       <Box flexDirection="column" height="100svh" display="flex">
         <Outlet />
-        <TanStackRouterDevtools />
+        {import.meta.env.DEV && <TanStackRouterDevtools />}
       </Box>
     </>
   ),
