@@ -1,9 +1,9 @@
 import { useAuth } from '../providers/auth';
-import NoAuthEnforcer from '../components/NoAuthEnforcer';
-import { registerUser } from '../api/client';
 import { useState } from 'react';
 import { Alert, Button, Stack } from '@mui/material';
 import { Google } from '@mui/icons-material';
+import useAPI from '../api/client';
+import { useNavigate } from '@tanstack/react-router';
 
 const containerStyle = {
   justifyContent: 'center',
@@ -17,42 +17,31 @@ const containerStyle = {
 
 const LoginPage = () => {
   const [err, setError] = useState(null);
-  const { signin, setDomainVerified } = useAuth();
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const { registerUser } = useAPI();
 
   const initiateAuth = () => {
-    signin({
-      onSuccess({ user }) {
-        // Returning an IIFE Promise here, so that onError gets called in case of error
-        return (async () => {
-          const token = await user.getIdToken();
-          await registerUser(token);
-          setDomainVerified(true);
-        })();
-      },
-      onError(err) {
-        setDomainVerified(false);
+    auth
+      .login()
+      .then(registerUser)
+      .then(() => navigate({ to: '/', replace: true }))
+      .catch((err) => {
         setError(err.message);
-      },
-    });
+      });
   };
 
   return (
-    <NoAuthEnforcer>
-      <Stack sx={containerStyle}>
-        {err && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            {err}
-          </Alert>
-        )}
-        <Button
-          onClick={initiateAuth}
-          variant="contained"
-          startIcon={<Google />}
-        >
-          Signin with Google
-        </Button>
-      </Stack>
-    </NoAuthEnforcer>
+    <Stack sx={containerStyle}>
+      {err && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          {err}
+        </Alert>
+      )}
+      <Button onClick={initiateAuth} variant="contained" startIcon={<Google />}>
+        Signin with Google
+      </Button>
+    </Stack>
   );
 };
 

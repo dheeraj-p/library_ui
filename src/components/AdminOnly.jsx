@@ -1,8 +1,8 @@
-import { useRole, UserRoles } from '../providers/role';
+import { useAuth } from '../providers/auth';
 
 const AdminOnly = ({ children }) => {
-  const role = useRole();
-  if (role === UserRoles.MANAGER) {
+  const auth = useAuth();
+  if (auth.isAdmin()) {
     return <>{children}</>;
   }
 

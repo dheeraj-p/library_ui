@@ -1,18 +1,25 @@
 import { ArrowBack, Logout } from '@mui/icons-material';
 import { AppBar, IconButton, Link, Toolbar, Typography } from '@mui/material';
+import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
 import { useAuth } from '../providers/auth';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const AppHeader = () => {
-  const { logout, user } = useAuth();
+  const auth = useAuth();
   const navigate = useNavigate();
+  const user = auth.getUser();
+
+  const logout = async () => {
+    await auth.logout();
+    navigate({ to: '/login', replace: true });
+  };
 
   const nameInitials = user.displayName
     .split(' ')
     .map((p) => p[0])
     .join('');
 
-  const canGoBack = window.history.state.idx !== 0;
+  // const canGoBack = window.history.state.idx !== 0;
+  const canGoBack = false; //TODO: fix this for tanstack router
   const goBack = () => {
     navigate(-1);
   };

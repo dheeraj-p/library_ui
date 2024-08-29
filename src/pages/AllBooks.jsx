@@ -13,9 +13,9 @@ import {
 } from '@mui/material';
 import { ManageAccounts, MenuBook, QrCodeScanner } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
-import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { CopyAlreadyBorrowed, CopyNotFound } from '../api/errors';
+import { useNavigate } from '@tanstack/react-router';
 
 const Row = ({ book }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
@@ -103,7 +103,7 @@ const AllBooks = () => {
   };
 
   const openAdminPanel = () => {
-    navigate('/manage');
+    navigate({ to: '/admin' });
   };
 
   return (

@@ -1,4 +1,3 @@
-import { createContext, useContext, useEffect, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import {
   browserPopupRedirectResolver,
@@ -6,7 +5,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { verifyAuth } from '../api/client';
+
+import { useGlobalContext } from './global_context';
 
 const setupFirebase = () => {
   const firebaseConfig = {
@@ -21,74 +21,62 @@ const setupFirebase = () => {
   return initializeApp(firebaseConfig);
 };
 
-const doNothing = () => {};
-
-const AuthContext = createContext(null);
-
 const app = setupFirebase();
 const auth = getAuth(app);
 
-const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthReady, setAuthReady] = useState(false);
-  const [isDomainVerified, setDomainVerified] = useState(false);
+const UserRoles = {
+  READER: 'READER',
+  MANAGER: 'MANAGER',
+};
 
-  useEffect(() => {
-    auth.authStateReady().then(() => setAuthReady(true));
-  }, []);
+class UnauthorizedUser extends Error {}
 
-  useEffect(() => {
-    return auth.onAuthStateChanged((user) => {
-      if (!user) {
-        setUser(null);
-        return;
-      }
+const createAuth = (baseAuth, authHelperAPIs) => {
+  const _ = baseAuth;
+  const apis = authHelperAPIs;
 
-      user
-        .getIdToken()
-        .then(verifyAuth)
-        .then(() => {
-          setUser(user);
-          setDomainVerified(true);
-        })
-        .catch((err) => {
-          logout();
-          console.error(err);
-        });
-    });
-  }, []);
+  let role = null;
+  let isVerified = false;
 
-  const signin = ({ onSuccess, onError }) => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    signInWithPopup(auth, provider, browserPopupRedirectResolver)
-      .then(onSuccess ?? doNothing)
-      .catch(onError ?? doNothing);
+  const getUser = () => _.currentUser;
+  const isAuthenticated = () => getUser() !== null;
+  const getToken = async () => await getUser().getIdToken();
+  const isAdmin = () => role === UserRoles.MANAGER;
+
+  return {
+    getUser,
+    isAuthenticated,
+    getToken,
+    isAdmin,
+    getRole: () => role,
+    loadState: async () => {
+      await _.authStateReady();
+    },
+    verifyAndInit: async () => {
+      if (!isAuthenticated()) throw new UnauthorizedUser();
+      if (isVerified) return;
+
+      const token = await getToken();
+      await apis.verifyAuth(token);
+      role = await apis.getUserRole(token);
+      isVerified = true;
+    },
+    login: async () => {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      return signInWithPopup(baseAuth, provider, browserPopupRedirectResolver);
+    },
+    logout: async () => {
+      await _.signOut();
+      isVerified = false;
+      role = null;
+    },
   };
-
-  const logout = (onDone = doNothing) => {
-    auth.signOut().then(onDone);
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        signin,
-        logout,
-        isAuthReady,
-        isDomainVerified,
-        setDomainVerified,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
 };
 
 const useAuth = () => {
-  return useContext(AuthContext);
+  const { auth } = useGlobalContext();
+  return auth;
 };
 
-export default AuthProvider;
-export { useAuth };
+export { useAuth, auth, createAuth };

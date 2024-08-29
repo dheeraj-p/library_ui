@@ -7,6 +7,8 @@
 - [x] Add border around QR code
 - [x] Add title in the QR code
 - [ ] Protect Admin only routes
+- [ ] Add a proper app loading screen (first load)
+- [ ] Add a common loading screen for API calls
 - [ ] Trim values before sending to API calls
 - [x] Add scanner and UI to return book
 - [ ] Display "all books" in a lazy-loading manner (use pagination internally)
@@ -16,7 +18,10 @@
 - [ ] Return cancel signal for API calls in useEffect hook
 - [ ] Create proper empty and error placeholders for screens where list of books are being rendered.
 - [ ] Create screen to change user roles
-- [ ] Avoid using `navigate` function from react-router-dom (They suggest something else). Also check why?
+- [x] Avoid using `navigate` function from react-router-dom (They suggest something else). Also check why? (Migrating to tanstack router)
+- [ ] Implement code splitting using Tanstack lazy routes
+- [ ] Move auth, api related code to a common directory
+- [ ] Separate out firebase app/auth from auth module (dependency inversion)
 - [x] Make the login screen beautiful
 - [ ] Find a good background for login screen
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
@@ -24,5 +29,7 @@
 
 ### For Future
 
-- [ ] Refactor screens and figure out how react router can be used effectively (Probably use router loaders to fetch the initial config before actually rendering the application).
+- [ ] Refactor screens and figure out how react router can be used effectively (Probably use router loaders to fetch the initial config before actually rendering the application). (Migrating to tanstack router)
+  - [x] Migrate existing app to tanstack
+  - [ ] Create different routes for dashboard sections (all-books, currently-reading, request)
 - [ ] Avoid fetching user role and initial authentication data on Admin Panel.

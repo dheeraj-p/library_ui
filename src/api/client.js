@@ -1,4 +1,4 @@
-import { useAuth } from '../providers/auth';
+import { useGlobalContext } from '../providers/global_context';
 import {
   APIFailedError,
   BookNotFoundError,
@@ -110,7 +110,7 @@ const registerUser = async (token) => {
 const verifyAuth = async (token) => {
   const response = await fetchWithAuth('/verify', token);
   if (response.status === 403) throw new UnknownDomainError();
-  if (!response.ok) APIFailedError('Could not verify authentication');
+  if (!response.ok) throw new APIFailedError('Could not verify authentication');
 };
 
 const returnBook = async (token, copyId) => {
@@ -135,12 +135,10 @@ const fetchCopies = async (token, from, to) => {
   return response.json();
 };
 
-const useAPI = () => {
-  const { user } = useAuth();
-
+const createApiClient = (auth) => {
   const withAuth = (apiCaller) => {
     return async (...args) => {
-      const token = await user.getIdToken();
+      const token = await auth.getToken();
       return apiCaller(token, ...args);
     };
   };
@@ -153,9 +151,16 @@ const useAPI = () => {
     fetchCurrentlyReadingBooks: withAuth(fetchCurrentlyReadingBooks),
     returnBook: withAuth(returnBook),
     fetchCopies: withAuth(fetchCopies),
+    registerUser: withAuth(registerUser),
     fetchBookInfo,
   };
 };
 
+const useAPI = () => {
+  const { api } = useGlobalContext();
+  return api;
+};
+
 export default useAPI;
-export { registerUser, verifyAuth };
+export { createApiClient };
+export const authHelperAPIs = { verifyAuth, getUserRole };

@@ -1,6 +1,4 @@
 import { Alert, Box, Button, Fab, TextField, Typography } from '@mui/material';
-import RequireAuth from '../components/RequireAuth';
-import UserRoleProvider from '../providers/role';
 import AppHeader from '../components/AppHeader';
 import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
@@ -124,93 +122,89 @@ const AddBooksBulk = () => {
   const shouldSubmit = isFormDataValid();
 
   return (
-    <RequireAuth>
-      <UserRoleProvider>
-        <Box flexDirection="column" height="100vh" display="flex">
-          <AppHeader />
-          <Box flexGrow={1} display="flex" flexDirection="column">
-            <Typography variant="h6" ml={2} mt={2}>
-              Add Book
-            </Typography>
-            <Box component="form" autoComplete="off" sx={formContainerStyle}>
-              <Alert severity={alertData.severity} sx={{ mb: 2 }}>
-                {alertData.message}
-              </Alert>
-              <ValidatedTextField
-                label="Title*"
-                value={bookData.title}
-                validator={validateBookTitle}
-                onChange={(title) => updateBookData({ title })}
-                fullWidth
-                sx={textFieldStyle}
-              />
-              <ValidatedTextField
-                label="ISBN 10"
-                value={bookData.isbn10}
-                fullWidth
-                sx={textFieldStyle}
-                validator={(v) => {
-                  if (isNotEmpty(bookData.isbn13) && isEmpty(v)) return;
-                  return validateISBN10(v);
-                }}
-                onChange={(isbn10) => updateBookData({ isbn10 })}
-              />
-              <ValidatedTextField
-                label="ISBN 13"
-                value={bookData.isbn13}
-                fullWidth
-                sx={textFieldStyle}
-                validator={(v) => {
-                  if (isNotEmpty(bookData.isbn10) && isEmpty(v)) return;
-                  return validateISBN13(v);
-                }}
-                onChange={(isbn13) => updateBookData({ isbn13 })}
-              />
-              <TextField
-                label="Authors (comma separated)"
-                value={bookData.authors?.join(',')}
-                fullWidth
-                sx={textFieldStyle}
-                onChange={updateAuthors}
-              />
-              <TextField
-                label="Number of copies"
-                type="number"
-                value={numberOfCopies}
-                fullWidth
-                inputProps={{ min: 1 }}
-                sx={textFieldStyle}
-                onChange={(e) => setNumberOfCopies(+e.target.value)}
-              />
-            </Box>
-            <Button
-              variant="outlined"
-              sx={{
-                mb: 2,
-                mr: 10,
-                ml: 2,
-              }}
-              disabled={!shouldSubmit}
-              onClick={addBook}
-            >
-              Add Book
-            </Button>
-            <Fab
-              color="primary"
-              sx={{ position: 'fixed', bottom: 10, right: 10 }}
-              onClick={openScanner}
-            >
-              <QrCodeScanner />
-            </Fab>
-          </Box>
+    <>
+      <AppHeader />
+      <Box flexGrow={1} display="flex" flexDirection="column">
+        <Typography variant="h6" ml={2} mt={2}>
+          Add Book
+        </Typography>
+        <Box component="form" autoComplete="off" sx={formContainerStyle}>
+          <Alert severity={alertData.severity} sx={{ mb: 2 }}>
+            {alertData.message}
+          </Alert>
+          <ValidatedTextField
+            label="Title*"
+            value={bookData.title}
+            validator={validateBookTitle}
+            onChange={(title) => updateBookData({ title })}
+            fullWidth
+            sx={textFieldStyle}
+          />
+          <ValidatedTextField
+            label="ISBN 10"
+            value={bookData.isbn10}
+            fullWidth
+            sx={textFieldStyle}
+            validator={(v) => {
+              if (isNotEmpty(bookData.isbn13) && isEmpty(v)) return;
+              return validateISBN10(v);
+            }}
+            onChange={(isbn10) => updateBookData({ isbn10 })}
+          />
+          <ValidatedTextField
+            label="ISBN 13"
+            value={bookData.isbn13}
+            fullWidth
+            sx={textFieldStyle}
+            validator={(v) => {
+              if (isNotEmpty(bookData.isbn10) && isEmpty(v)) return;
+              return validateISBN13(v);
+            }}
+            onChange={(isbn13) => updateBookData({ isbn13 })}
+          />
+          <TextField
+            label="Authors (comma separated)"
+            value={bookData.authors?.join(',')}
+            fullWidth
+            sx={textFieldStyle}
+            onChange={updateAuthors}
+          />
+          <TextField
+            label="Number of copies"
+            type="number"
+            value={numberOfCopies}
+            fullWidth
+            inputProps={{ min: 1 }}
+            sx={textFieldStyle}
+            onChange={(e) => setNumberOfCopies(+e.target.value)}
+          />
         </Box>
-        <BarcodeScanner
-          opened={isScannerOpened}
-          onCancel={closeScanner}
-          onResult={processISBN}
-        />
-      </UserRoleProvider>
-    </RequireAuth>
+        <Button
+          variant="outlined"
+          sx={{
+            mb: 2,
+            mr: 10,
+            ml: 2,
+          }}
+          disabled={!shouldSubmit}
+          onClick={addBook}
+        >
+          Add Book
+        </Button>
+        <Fab
+          color="primary"
+          sx={{ position: 'fixed', bottom: 10, right: 10 }}
+          onClick={openScanner}
+        >
+          <QrCodeScanner />
+        </Fab>
+      </Box>
+      <BarcodeScanner
+        opened={isScannerOpened}
+        onCancel={closeScanner}
+        onResult={processISBN}
+      />
+    </>
   );
 };
 

@@ -3,8 +3,6 @@ import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { QrCode } from '@mui/icons-material';
 import QRCode from 'qrcode';
 
-import RequireAuth from '../components/RequireAuth';
-import UserRoleProvider from '../providers/role';
 import AppHeader from '../components/AppHeader';
 import { formatForInput } from '../utils/date';
 import useAPI from '../api/client';
@@ -67,46 +65,42 @@ const QRCodes = () => {
   };
 
   return (
-    <RequireAuth>
-      <UserRoleProvider>
-        <Box height="100vh" display="flex" flexDirection="column">
-          <AppHeader />
-          {!isPrintMode && (
-            <>
-              <Stack direction="row" justifyContent="space-around" mt={2}>
-                <TextField
-                  type="date"
-                  label="From"
-                  value={formatForInput(from)}
-                  onChange={changeFrom}
-                />
-                <TextField
-                  type="date"
-                  label="To"
-                  value={formatForInput(to)}
-                  onChange={changeTo}
-                />
-              </Stack>
-              <Button
-                variant="contained"
-                sx={{ m: 2, alignSelf: 'stretch' }}
-                startIcon={<QrCode />}
-                onClick={fetchQRInfo}
-              >
-                Get Codes
-              </Button>
-            </>
-          )}
-          <Box pl={2} pr={2} flexGrow={1} mt={4}>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
-              {copies.map((copy, index) => (
-                <QRItemMemoised copy={copy} index={index} />
-              ))}
-            </Stack>
-          </Box>
-        </Box>
-      </UserRoleProvider>
-    </RequireAuth>
+    <>
+      <AppHeader />
+      {!isPrintMode && (
+        <>
+          <Stack direction="row" justifyContent="space-around" mt={2}>
+            <TextField
+              type="date"
+              label="From"
+              value={formatForInput(from)}
+              onChange={changeFrom}
+            />
+            <TextField
+              type="date"
+              label="To"
+              value={formatForInput(to)}
+              onChange={changeTo}
+            />
+          </Stack>
+          <Button
+            variant="contained"
+            sx={{ m: 2, alignSelf: 'stretch' }}
+            startIcon={<QrCode />}
+            onClick={fetchQRInfo}
+          >
+            Get Codes
+          </Button>
+        </>
+      )}
+      <Box pl={2} pr={2} flexGrow={1} mt={4}>
+        <Stack direction="row" flexWrap="wrap" gap={1}>
+          {copies.map((copy, index) => (
+            <QRItemMemoised copy={copy} index={index} />
+          ))}
+        </Stack>
+      </Box>
+    </>
   );
 };
 
