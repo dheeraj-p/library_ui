@@ -1,11 +1,16 @@
 import { ArrowBack, Logout } from '@mui/icons-material';
 import { AppBar, IconButton, Link, Toolbar, Typography } from '@mui/material';
-import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
+import {
+  Link as RouterLink,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router';
 import { useAuth } from '../providers/auth';
 
 const AppHeader = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const { history } = useRouter();
   const user = auth.getUser();
 
   const logout = async () => {
@@ -18,10 +23,11 @@ const AppHeader = () => {
     .map((p) => p[0])
     .join('');
 
-  // const canGoBack = window.history.state.idx !== 0;
-  const canGoBack = false; //TODO: fix this for tanstack router
+  const isOnRoot = history.location.pathname === '/'; // Checking on router history
+  const isWindowHistoryEmpty = window.history.state === null; // Checking on window history (not same as router history)
+  const canGoBack = !(isWindowHistoryEmpty || isOnRoot);
   const goBack = () => {
-    navigate(-1);
+    history.back();
   };
 
   return (
