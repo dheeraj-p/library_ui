@@ -1,6 +1,6 @@
 import { Virtuoso } from 'react-virtuoso';
 import useAPI from '../api/client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Box,
@@ -14,6 +14,7 @@ import {
 import { MenuBook, QrCodeScanner } from '@mui/icons-material';
 import { getRelativeTimeString } from '../utils/date';
 import BarcodeScanner from '../components/BarcodeScanner';
+import { useLoaderData, useNavigate } from '@tanstack/react-router';
 
 const containerStyle = {
   height: '100%',
@@ -48,35 +49,15 @@ const Row = ({ book }) => {
   );
 };
 
-const initialMessage = {
-  visible: false,
-  content: '',
-};
-
 const CurrentlyReading = () => {
-  const [books, setBooks] = useState([]);
-  const [messageInfo, setMessageInfo] = useState(initialMessage);
+  const books = useLoaderData({});
   const [isScannerOpened, setScannerOpened] = useState(false);
   const [snackbarData, setSnackbarData] = useState({ opened: false });
-  const { fetchCurrentlyReadingBooks, returnBook } = useAPI();
+  const navigate = useNavigate();
+  const { returnBook } = useAPI();
 
-  useEffect(() => {
-    loadBooks();
-  }, []);
-
-  const loadBooks = () => {
-    setMessageInfo({ visible: true, content: 'Looking for your books...' });
-    fetchCurrentlyReadingBooks()
-      .then((books) => {
-        setBooks(books);
-        setMessageInfo({ visible: false });
-      })
-      .catch((_) => {
-        setMessageInfo({
-          visible: true,
-          content: 'Oops! Something went wrong :(',
-        });
-      });
+  const refresh = () => {
+    navigate({ to: '.', replace: true });
   };
 
   const openScanner = () => setScannerOpened(true);
@@ -90,7 +71,7 @@ const CurrentlyReading = () => {
 
   const openSnackbar = (data) => {
     closeSnackbar();
-    setSnackbarData({ ...data, opened: true, duration: 1500 });
+    setSnackbarData({ ...data, opened: true, duration: 3000 });
   };
 
   const showError = (message) => openSnackbar({ message, severity: 'error' });
@@ -104,7 +85,7 @@ const CurrentlyReading = () => {
     returnBook(copyId)
       .then((res) => {
         showSuccess('Book returned, keep reading. :)');
-        loadBooks();
+        refresh();
       })
       .catch((_) => showError('Oops! Unknown Error'));
 
@@ -113,38 +94,32 @@ const CurrentlyReading = () => {
 
   return (
     <Box sx={containerStyle}>
-      {messageInfo.visible ? (
-        <Typography variant="body1">{messageInfo.content}</Typography>
-      ) : (
-        <>
-          <Virtuoso
-            style={{ flexGrow: 1 }}
-            totalCount={books.length}
-            itemContent={(index) => <Row book={books[index]} />}
-            components={{
-              EmptyPlaceholder: () => {
-                return (
-                  <Box sx={containerStyle}>
-                    <Typography variant="body1">
-                      You are not reading any book at the moment
-                    </Typography>
-                  </Box>
-                );
-              },
-            }}
-          />
-          {books.length > 0 && (
-            <Fab
-              color="primary"
-              variant="extended"
-              sx={fabStyle}
-              onClick={openScanner}
-            >
-              <QrCodeScanner sx={{ mr: 1 }} />
-              Return
-            </Fab>
-          )}
-        </>
+      <Virtuoso
+        style={{ flexGrow: 1 }}
+        totalCount={books.length}
+        itemContent={(index) => <Row book={books[index]} />}
+        components={{
+          EmptyPlaceholder: () => {
+            return (
+              <Box sx={containerStyle}>
+                <Typography variant="body1">
+                  You are not reading any book at the moment
+                </Typography>
+              </Box>
+            );
+          },
+        }}
+      />
+      {books.length > 0 && (
+        <Fab
+          color="primary"
+          variant="extended"
+          sx={fabStyle}
+          onClick={openScanner}
+        >
+          <QrCodeScanner sx={{ mr: 1 }} />
+          Return
+        </Fab>
       )}
 
       <BarcodeScanner
@@ -156,6 +131,7 @@ const CurrentlyReading = () => {
         open={snackbarData.opened}
         autoHideDuration={snackbarData.duration}
         onClose={closeSnackbar}
+        sx={{ mb: 7 }}
       >
         <Alert severity={snackbarData.severity}>{snackbarData.message}</Alert>
       </Snackbar>

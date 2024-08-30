@@ -5,7 +5,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { createAuth, auth as firebaseAuth } from './providers/auth.jsx';
 import { routeTree } from './routeTree.gen';
 import { authHelperAPIs, createApiClient } from './api/client.js';
-import LoadingPage from './pages/LoadingPage.jsx';
+import LoadingView from './components/LoadingView.jsx';
 
 const router = createRouter({ routeTree });
 
@@ -26,7 +26,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <RouterProvider
         router={router}
         context={{ auth, api }}
-        defaultPendingComponent={LoadingPage}
+        defaultPendingComponent={() => <LoadingView fullScreen />}
+        defaultGcTime={0}
+        defaultPendingMs={0}
       />
     </ThemeProvider>
   </React.StrictMode>

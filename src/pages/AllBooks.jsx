@@ -15,7 +15,7 @@ import { ManageAccounts, MenuBook, QrCodeScanner } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { CopyAlreadyBorrowed, CopyNotFound } from '../api/errors';
-import { useNavigate } from '@tanstack/react-router';
+import { useLoaderData, useNavigate } from '@tanstack/react-router';
 
 const Row = ({ book }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
@@ -41,18 +41,12 @@ const Row = ({ book }) => {
 };
 
 const AllBooks = () => {
-  const [books, setBooks] = useState([]);
+  const books = useLoaderData({});
   const [isScannerOpened, setScannerOpened] = useState(false);
   const [snackbarData, setSnackbarData] = useState({ opened: false });
 
-  const { getAllBooks, borrowBook } = useAPI();
+  const { borrowBook } = useAPI();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getAllBooks()
-      .then(setBooks)
-      .catch(() => showError('Oops! something went wrong.'));
-  }, []);
 
   const openScanner = () => setScannerOpened(true);
   const closeScanner = () => {
@@ -65,7 +59,7 @@ const AllBooks = () => {
 
   const openSnackbar = (data) => {
     closeSnackbar();
-    setSnackbarData({ ...data, opened: true, duration: 1500 });
+    setSnackbarData({ ...data, opened: true, duration: 3000 });
   };
 
   const showWarning = (message) =>
@@ -140,6 +134,7 @@ const AllBooks = () => {
         open={snackbarData.opened}
         autoHideDuration={snackbarData.duration}
         onClose={closeSnackbar}
+        sx={{ mb: 7 }}
       >
         <Alert severity={snackbarData.severity}>{snackbarData.message}</Alert>
       </Snackbar>

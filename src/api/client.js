@@ -1,4 +1,3 @@
-import { useGlobalContext } from '../providers/global_context';
 import {
   APIFailedError,
   BookNotFoundError,
@@ -6,6 +5,8 @@ import {
   CopyNotFound,
   UnknownDomainError,
 } from './errors';
+
+import { useGlobalContext } from '../providers/global_context';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
