@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { createAuth, auth as firebaseAuth } from './providers/auth.jsx';
+import { createAuth, auth as firebaseAuth } from './common/auth.js';
 import { routeTree } from './routeTree.gen';
-import { authHelperAPIs, createApiClient } from './api/client.js';
+import { authHelperAPIs, createApiClient } from './common/api_client.js';
 import LoadingView from './components/LoadingView.jsx';
 
 const router = createRouter({ routeTree });

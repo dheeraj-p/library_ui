@@ -12,7 +12,7 @@ import {
   useNavigate,
   useRouter,
 } from '@tanstack/react-router';
-import { useAuth } from '../providers/auth';
+import { useAuth } from '../common/auth';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 

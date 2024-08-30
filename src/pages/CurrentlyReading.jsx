@@ -1,5 +1,5 @@
 import { Virtuoso } from 'react-virtuoso';
-import useAPI from '../api/client';
+import useAPI from '../common/api_client';
 import { useState } from 'react';
 import {
   Alert,

@@ -5,7 +5,7 @@ import QRCode from 'qrcode';
 
 import AppHeader from '../components/AppHeader';
 import { formatForInput } from '../utils/date';
-import useAPI from '../api/client';
+import useAPI from '../common/api_client';
 
 const qrContainerStyle = {
   width: 200,

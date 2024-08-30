@@ -3,8 +3,8 @@ import AppHeader from '../components/AppHeader';
 import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
 import BarcodeScanner from '../components/BarcodeScanner';
-import useAPI from '../api/client';
-import { BookNotFoundError } from '../api/errors';
+import useAPI from '../common/api_client';
+import { BookNotFoundError } from '../common/errors';
 import ValidatedTextField from '../components/ValidatedTextField';
 import {
   isNotEmpty,

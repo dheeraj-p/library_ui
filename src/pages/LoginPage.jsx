@@ -1,8 +1,8 @@
-import { useAuth } from '../providers/auth';
+import { useAuth } from '../common/auth';
 import { useState } from 'react';
 import { Alert, Button, Stack } from '@mui/material';
 import { Google } from '@mui/icons-material';
-import useAPI from '../api/client';
+import useAPI from '../common/api_client';
 import { useNavigate } from '@tanstack/react-router';
 
 const containerStyle = {

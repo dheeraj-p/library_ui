@@ -7,6 +7,7 @@ import {
 } from 'firebase/auth';
 
 import { useGlobalContext } from './global_context';
+import { UnauthorizedUser } from './errors';
 
 const setupFirebase = () => {
   const firebaseConfig = {
@@ -28,8 +29,6 @@ const UserRoles = {
   READER: 'READER',
   MANAGER: 'MANAGER',
 };
-
-class UnauthorizedUser extends Error {}
 
 const createAuth = (baseAuth, authHelperAPIs) => {
   const _ = baseAuth;

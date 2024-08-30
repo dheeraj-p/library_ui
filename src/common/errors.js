@@ -28,10 +28,13 @@ class UnknownDomainError extends Error {
   }
 }
 
+class UnauthorizedUser extends Error {}
+
 export {
   BookNotFoundError,
   APIFailedError,
   CopyAlreadyBorrowed,
   CopyNotFound,
   UnknownDomainError,
+  UnauthorizedUser,
 };

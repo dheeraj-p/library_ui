@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import useAPI from '../api/client';
+import useAPI from '../common/api_client';
 import { Virtuoso } from 'react-virtuoso';
 import {
   Alert,
@@ -14,7 +14,7 @@ import {
 import { ManageAccounts, MenuBook, QrCodeScanner } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
 import BarcodeScanner from '../components/BarcodeScanner';
-import { CopyAlreadyBorrowed, CopyNotFound } from '../api/errors';
+import { CopyAlreadyBorrowed, CopyNotFound } from '../common/errors';
 import { useLoaderData, useNavigate } from '@tanstack/react-router';
 
 const Row = ({ book }) => {

@@ -1,4 +1,4 @@
-import { useAuth } from '../providers/auth';
+import { useAuth } from '../common/auth';
 
 const AdminOnly = ({ children }) => {
   const auth = useAuth();

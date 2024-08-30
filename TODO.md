@@ -21,13 +21,14 @@
 - [ ] Create screen to change user roles
 - [x] Avoid using `navigate` function from react-router-dom (They suggest something else). Also check why? (Migrating to tanstack router)
 - [ ] Implement code splitting using Tanstack lazy routes
-- [ ] Move auth, api related code to a common directory
+- [x] Move auth, api related code to a common directory
 - [ ] Separate out firebase app/auth from auth module (dependency inversion)
 - [x] Make the login screen beautiful
 - [ ] Find a good background for login screen
 - [x] Fix app bar back button for dashboard routes (Don't show back button)
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 - [ ] Admin feature to scan any book and fetch the information about book
+- [ ] Admin feature to see all borrowed books
 
 ### For Future
 
