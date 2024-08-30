@@ -6,7 +6,7 @@
 - [x] Create screen to display printable QR codes of book
 - [x] Add border around QR code
 - [x] Add title in the QR code
-- [ ] Protect Admin only routes
+- [x] Protect Admin only routes
 - [ ] Add a proper app loading screen (first load)
 - [ ] Add a common loading screen for API calls
 - [ ] Trim values before sending to API calls
@@ -24,6 +24,7 @@
 - [ ] Separate out firebase app/auth from auth module (dependency inversion)
 - [x] Make the login screen beautiful
 - [ ] Find a good background for login screen
+- [x] Fix app bar back button for dashboard routes (Don't show back button)
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 - [ ] Admin feature to scan any book and fetch the information about book
 

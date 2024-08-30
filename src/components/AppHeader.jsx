@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { useAuth } from '../providers/auth';
 
-const AppHeader = () => {
+const AppHeader = ({ canGoBack = true }) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const { history } = useRouter();
@@ -23,9 +23,6 @@ const AppHeader = () => {
     .map((p) => p[0])
     .join('');
 
-  const isOnRoot = history.location.pathname === '/'; // Checking on router history
-  const isWindowHistoryEmpty = window.history.state === null; // Checking on window history (not same as router history)
-  const canGoBack = !(isWindowHistoryEmpty || isOnRoot);
   const goBack = () => {
     history.back();
   };

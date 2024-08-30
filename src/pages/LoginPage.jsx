@@ -11,7 +11,7 @@ const containerStyle = {
   pr: 2,
   pl: 2,
   alignItems: 'center',
-  backgroundImage: 'url("bg.png")',
+  // backgroundImage: 'url("bg.png")',
   backgroundSize: 'auto 100svh',
 };
 
