@@ -24,7 +24,7 @@ const Row = ({ book }) => {
   return (
     <ListItem>
       <ListItemAvatar>
-        <MenuBook color="primary" fontSize="large" />
+        <MenuBook fontSize="large" color="primary" />
       </ListItemAvatar>
       <ListItemText
         primary={book.title}

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { createRootRoute, Outlet, useRouter } from '@tanstack/react-router';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
 export const Route = createRootRoute({
