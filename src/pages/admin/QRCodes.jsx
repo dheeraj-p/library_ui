@@ -3,9 +3,10 @@ import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { QrCode } from '@mui/icons-material';
 import QRCode from 'qrcode';
 
-import AppHeader from '../components/AppHeader';
-import { formatForInput } from '../utils/date';
-import useAPI from '../common/api_client';
+import AppHeader from '../../components/AppHeader';
+import { formatForInput } from '../../common/utils/date';
+import useAPI from '../../common/api_client';
+import { shorten } from '../../common/utils/general';
 
 const qrContainerStyle = {
   width: 200,
@@ -23,7 +24,7 @@ const qrContainerStyle = {
 const QRItem = ({ copy, index }) => {
   const canvasRef = useRef();
   const { title, copy_id } = copy;
-  const titleToRender = title.length > 50 ? `${title.slice(0, 50)}...` : title;
+  const titleToRender = shorten(title, 50);
 
   useEffect(() => {
     (async () => {
@@ -96,7 +97,7 @@ const QRCodes = () => {
       <Box pl={2} pr={2} flexGrow={1} mt={4}>
         <Stack direction="row" flexWrap="wrap" gap={1}>
           {copies.map((copy, index) => (
-            <QRItemMemoised copy={copy} index={index} />
+            <QRItemMemoised key={copy.copy_id} copy={copy} index={index} />
           ))}
         </Stack>
       </Box>

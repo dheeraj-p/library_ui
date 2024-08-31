@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import { useState } from 'react';
-import { isNotEmpty } from '../utils/validators';
+import { isNotEmpty } from '../common/utils/validators';
 
 const ValidatedTextField = ({ validator, value, onChange, ...restProps }) => {
   const [errorText, setErrorText] = useState('');

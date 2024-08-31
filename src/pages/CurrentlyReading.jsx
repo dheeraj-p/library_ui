@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import { MenuBook, QrCodeScanner } from '@mui/icons-material';
-import { getRelativeTimeString } from '../utils/date';
+import { getRelativeTimeString } from '../common/utils/date';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { useLoaderData, useNavigate } from '@tanstack/react-router';
 

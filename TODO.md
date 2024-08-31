@@ -28,10 +28,12 @@
 - [x] Fix app bar back button for dashboard routes (Don't show back button)
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 - [ ] Admin feature to scan any book and fetch the information about book
-- [ ] Admin feature to see all borrowed books
+- [x] Admin feature to see all borrowed books
+- [ ] Display a generic Error component for loader failures
 
 ### For Future
 
+- [ ] Refactor API Client to avoid duplication
 - [ ] Refactor screens and figure out how react router can be used effectively (Probably use router loaders to fetch the initial config before actually rendering the application). (Migrating to tanstack router)
   - [x] Migrate existing app to tanstack
   - [x] Create different routes for dashboard sections (all-books, currently-reading, request)

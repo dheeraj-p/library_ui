@@ -26,4 +26,12 @@ const formatForInput = (d) => {
   return `${year}-${month}-${date}`;
 };
 
-export { getRelativeTimeString, formatForInput };
+const formatToLocale = (d) => {
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+export { getRelativeTimeString, formatForInput, formatToLocale };

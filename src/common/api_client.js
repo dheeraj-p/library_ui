@@ -136,6 +136,17 @@ const fetchCopies = async (token, from, to) => {
   return response.json();
 };
 
+const fetchAllBorrowedBooks = async (token) => {
+  const response = await fetchWithAuth('/admin/borrowed-books', token);
+  const books = await response.json();
+
+  return books.map((book) => {
+    //Converting authors separated by '|' to array in place (to save memory and time);
+    book.authors = book.authors.split('|');
+    return book;
+  });
+};
+
 const createApiClient = (auth) => {
   const withAuth = (apiCaller) => {
     return async (...args) => {
@@ -153,6 +164,7 @@ const createApiClient = (auth) => {
     returnBook: withAuth(returnBook),
     fetchCopies: withAuth(fetchCopies),
     registerUser: withAuth(registerUser),
+    fetchAllBorrowedBooks: withAuth(fetchAllBorrowedBooks),
     fetchBookInfo,
   };
 };

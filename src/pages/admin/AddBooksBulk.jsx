@@ -1,11 +1,11 @@
 import { Alert, Box, Button, Fab, TextField, Typography } from '@mui/material';
-import AppHeader from '../components/AppHeader';
+import AppHeader from '../../components/AppHeader';
 import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
-import BarcodeScanner from '../components/BarcodeScanner';
-import useAPI from '../common/api_client';
-import { BookNotFoundError } from '../common/errors';
-import ValidatedTextField from '../components/ValidatedTextField';
+import BarcodeScanner from '../../components/BarcodeScanner';
+import useAPI from '../../common/api_client';
+import { BookNotFoundError } from '../../common/errors';
+import ValidatedTextField from '../../components/ValidatedTextField';
 import {
   isNotEmpty,
   isEmpty,
@@ -14,7 +14,7 @@ import {
   validateISBN13,
   isValidISBN10,
   isValidISBN13,
-} from '../utils/validators';
+} from '../../common/utils/validators';
 
 const textFieldStyle = {
   mb: 2,
