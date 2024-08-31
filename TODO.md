@@ -29,7 +29,7 @@
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 - [ ] Admin feature to scan any book and fetch the information about book
 - [x] Admin feature to see all borrowed books
-- [ ] Display a generic Error component for loader failures
+- [x] Display a generic Error component for loader failures
 
 ### For Future
 

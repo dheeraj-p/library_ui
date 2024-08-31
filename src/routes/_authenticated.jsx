@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { UnauthorizedUser, UnknownDomainError } from '../common/errors';
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ context }) => {
@@ -10,10 +11,17 @@ export const Route = createFileRoute('/_authenticated')({
     try {
       await auth.verifyAndInit();
     } catch (err) {
+      if (
+        err instanceof UnknownDomainError ||
+        err instanceof UnauthorizedUser
+      ) {
+        //Logout to flush out inconsitent state
+        await auth.logout();
+        throw redirect({ to: '/login' });
+      }
+
       console.error('Auth Error:', err);
-      //Logout to flush out inconsitent state
-      await auth.logout();
-      throw redirect({ to: '/login' });
+      throw err;
     }
   },
 });
