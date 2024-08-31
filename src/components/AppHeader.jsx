@@ -13,6 +13,7 @@ import {
   useRouter,
 } from '@tanstack/react-router';
 import { useAuth } from '../common/auth';
+import AppLogo from '../assets/Logo';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
@@ -40,7 +41,7 @@ const AppHeader = ({ canGoBack = true }) => {
     <>
       <AppBar position="fixed">
         <Toolbar>
-          {canGoBack ? (
+          {canGoBack && (
             <IconButton
               edge="start"
               color="inherit"
@@ -49,21 +50,17 @@ const AppHeader = ({ canGoBack = true }) => {
             >
               <ArrowBack />
             </IconButton>
-          ) : (
-            <></>
           )}
 
           <Link
             variant="h6"
             sx={{ flexGrow: 1 }}
-            ml={1}
-            color="inherit"
-            underline="none"
             component={RouterLink}
+            mt={1}
             to="/"
             replace
           >
-            STEP Library
+            <AppLogo scale={0.8} contrastMode />
           </Link>
           <Typography variant="body1" mr={1}>
             {nameInitials}

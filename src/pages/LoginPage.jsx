@@ -2,8 +2,10 @@ import { useAuth } from '../common/auth';
 import { useState } from 'react';
 import { Alert, Button, Stack } from '@mui/material';
 import { Google } from '@mui/icons-material';
-import useAPI from '../common/api_client';
 import { useNavigate } from '@tanstack/react-router';
+import useAPI from '../common/api_client';
+
+import AppLogo from '../assets/Logo';
 
 const containerStyle = {
   justifyContent: 'center',
@@ -11,7 +13,6 @@ const containerStyle = {
   pr: 2,
   pl: 2,
   alignItems: 'center',
-  // backgroundImage: 'url("bg.png")',
   backgroundSize: 'auto 100svh',
 };
 
@@ -33,14 +34,18 @@ const LoginPage = () => {
 
   return (
     <Stack sx={containerStyle}>
-      {err && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
-          {err}
-        </Alert>
-      )}
+      <AppLogo scale={1.8} sx={{ mb: 6 }} />
       <Button onClick={initiateAuth} variant="contained" startIcon={<Google />}>
         Signin with Google
       </Button>
+      {err && (
+        <Alert
+          severity="error"
+          sx={{ position: 'fixed', top: 0, width: '100svw' }}
+        >
+          {err}
+        </Alert>
+      )}
     </Stack>
   );
 };
