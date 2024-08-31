@@ -15,6 +15,7 @@ import {
   isValidISBN10,
   isValidISBN13,
 } from '../../common/utils/validators';
+import { shorten } from '../../common/utils/general';
 
 const textFieldStyle = {
   mb: 2,
@@ -70,8 +71,13 @@ const AddBooksBulk = () => {
     setBookData({ ...bookData, ...partialData });
   };
 
+  const updateTitle = (title) => updateBookData({ title });
+  const updateISBN13 = (v) => updateBookData({ isbn13: shorten(v.trim(), 13) });
+  const updateISBN10 = (v) => updateBookData({ isbn10: shorten(v.trim(), 10) });
+
   const updateAuthors = (e) => {
-    setBookData({ ...bookData, authors: e.target.value.split(',') });
+    const authors = e.value.trim().split(',');
+    updateBookData({ authors });
   };
 
   const processISBN = (isbn) => {
@@ -88,13 +94,20 @@ const AddBooksBulk = () => {
     closeScanner();
   };
 
+  const trimmedBookData = () => ({
+    title: bookData.title.trim(),
+    isbn10: bookData.isbn10.trim(),
+    isbn13: bookData.isbn13.trim(),
+    authors: bookData.authors,
+  });
+
   const addBook = () => {
     setAlertData({
       severity: 'info',
       message: 'Adding book to library...',
     });
     registerBook({
-      bookData,
+      bookData: trimmedBookData(),
       copies: numberOfCopies,
     })
       .then(() => {
@@ -136,7 +149,7 @@ const AddBooksBulk = () => {
             label="Title*"
             value={bookData.title}
             validator={validateBookTitle}
-            onChange={(title) => updateBookData({ title })}
+            onChange={updateTitle}
             fullWidth
             sx={textFieldStyle}
           />
@@ -149,7 +162,7 @@ const AddBooksBulk = () => {
               if (isNotEmpty(bookData.isbn13) && isEmpty(v)) return;
               return validateISBN10(v);
             }}
-            onChange={(isbn10) => updateBookData({ isbn10 })}
+            onChange={updateISBN10}
           />
           <ValidatedTextField
             label="ISBN 13"
@@ -160,7 +173,7 @@ const AddBooksBulk = () => {
               if (isNotEmpty(bookData.isbn10) && isEmpty(v)) return;
               return validateISBN13(v);
             }}
-            onChange={(isbn13) => updateBookData({ isbn13 })}
+            onChange={updateISBN13}
           />
           <TextField
             label="Authors (comma separated)"

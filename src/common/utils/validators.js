@@ -1,4 +1,5 @@
-const isNotEmpty = (str) => str !== null && str !== undefined && str.length > 0;
+const isNotEmpty = (str) =>
+  str !== null && str !== undefined && str.trim().length > 0;
 const isEmpty = (str) => !isNotEmpty(str);
 
 const validateBookTitle = (title) => {
@@ -7,8 +8,8 @@ const validateBookTitle = (title) => {
   return "Title can't be empty";
 };
 
-const isValidISBN10 = (isbn) => isNotEmpty(isbn) && isbn.length === 10;
-const isValidISBN13 = (isbn) => isNotEmpty(isbn) && isbn.length === 13;
+const isValidISBN10 = (isbn) => isNotEmpty(isbn) && isbn.trim().length === 10;
+const isValidISBN13 = (isbn) => isNotEmpty(isbn) && isbn.trim().length === 13;
 
 const validateISBN10 = (isbn) => {
   if (isValidISBN10(isbn)) return;

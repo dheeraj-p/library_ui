@@ -10,7 +10,7 @@
 - [x] Add a proper app loading screen (first load)
 - [ ] Figure out a way to create common snackbar for showing message (or a common messaging mechanism throughout the app)
 - [ ] Add a common loading screen for API calls
-- [ ] Trim values before sending to API calls
+- [x] Trim values before sending to API calls
 - [x] Add scanner and UI to return book
 - [ ] Display "all books" in a lazy-loading manner (use pagination internally)
 - [ ] Show full details of book in a new screen including, who all are reading that book
