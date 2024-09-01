@@ -1,4 +1,4 @@
-### To Create a Working Version
+### To Release a Working Version
 
 - [x] Implement feature to borrow books
 - [x] Fetch and display currently reading book.
@@ -24,12 +24,15 @@
 - [x] Move auth, api related code to a common directory
 - [ ] Separate out firebase app/auth from auth module (dependency inversion)
 - [x] Make the login screen beautiful
-- [ ] Find a good background for login screen
+- [x] Find a good background for login screen
 - [x] Fix app bar back button for dashboard routes (Don't show back button)
 - [ ] Remove duplication from "All Books" page and "Currently Reading" page (if possible)
 - [ ] Admin feature to scan any book and fetch the information about book
 - [x] Admin feature to see all borrowed books
 - [x] Display a generic Error component for loader failures
+- [ ] Show loader on after user logs in and waits for main app to load.
+- [ ] Add Splash screen
+- [ ] Find a better icon for app
 
 ### For Future
 
@@ -37,5 +40,5 @@
 - [ ] Refactor screens and figure out how react router can be used effectively (Probably use router loaders to fetch the initial config before actually rendering the application). (Migrating to tanstack router)
   - [x] Migrate existing app to tanstack
   - [x] Create different routes for dashboard sections (all-books, currently-reading, request)
-  - [ ] Use loaders to fetch data for loading books
+  - [x] Use loaders to fetch data for loading books
 - [x] Avoid fetching user role and initial authentication data on Admin Panel.
