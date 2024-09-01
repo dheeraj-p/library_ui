@@ -18,7 +18,7 @@ const matchParentStyle = {
   width: '100%',
 };
 
-const LoadingView = ({ fullScreen = false }) => {
+const LoadingView = ({ fullScreen = false, message }) => {
   const dimens = fullScreen ? fullScreenStyle : matchParentStyle;
   const imgWidth = fullScreen ? 150 : 100;
 
@@ -26,7 +26,7 @@ const LoadingView = ({ fullScreen = false }) => {
     <Box sx={{ ...loadingStyle, ...dimens }}>
       <img src={LoadingGIF} width={imgWidth} />
       <Typography variant="h6" fontWeight={400} color="primary" mt={2}>
-        Working on it
+        {message ? message : 'Working on it'}
       </Typography>
     </Box>
   );

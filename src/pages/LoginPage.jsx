@@ -6,6 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import useAPI from '../common/api_client';
 
 import AppLogo from '../assets/Logo';
+import LoadingView from '../components/LoadingView';
 
 const containerStyle = {
   justifyContent: 'center',
@@ -18,19 +19,24 @@ const containerStyle = {
 
 const LoginPage = () => {
   const [err, setError] = useState(null);
+  const [isLoading, setLoading] = useState(false);
   const auth = useAuth();
   const navigate = useNavigate();
   const { registerUser } = useAPI();
 
   const initiateAuth = () => {
+    setLoading(true);
     auth
       .login()
       .then(registerUser)
       .then(() => navigate({ to: '/', replace: true }))
       .catch((err) => {
         setError(err.message);
-      });
+      })
+      .finally(() => setLoading(false));
   };
+
+  if (isLoading) return <LoadingView fullScreen message="Logging In..." />;
 
   return (
     <Stack sx={containerStyle}>

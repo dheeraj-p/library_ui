@@ -30,7 +30,7 @@
 - [ ] Admin feature to scan any book and fetch the information about book
 - [x] Admin feature to see all borrowed books
 - [x] Display a generic Error component for loader failures
-- [ ] Show loader on after user logs in and waits for main app to load.
+- [x] Show loader on after user logs in and waits for main app to load.
 - [ ] Add Splash screen
 - [ ] Find a better icon for app
 
