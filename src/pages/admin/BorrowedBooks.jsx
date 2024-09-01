@@ -10,38 +10,30 @@ import AppHeader from '../../components/AppHeader';
 import { useLoaderData } from '@tanstack/react-router';
 import { formatToLocale, getRelativeTimeString } from '../../common/utils/date';
 import { shorten } from '../../common/utils/general';
+import BookCover from '../../components/BookCover';
 
-const BookRow = ({ book }) => {
+const BookRow = ({ book, index }) => {
   const username = book.borrower.split('@')[0];
   const borrowedDate = new Date(book.borrowed_on + 'Z');
+  const title = shorten(book.title, 50);
+  const authorText = shorten(book.authors.join(', '), 50);
+
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar sx={{ mr: 2, alignSelf: 'center' }}>
-        <img
-          width={70}
-          height={100}
-          style={{ objectFit: 'cover', border: '0.5px solid' }}
-        />
+        <BookCover title={title} author={authorText} index={index} />
       </ListItemAvatar>
-      <Stack>
-        <ListItemText
-          primary={shorten(book.title, 50)}
-          secondary={`by ${shorten(book.authors.join(', '), 50)}`}
-          sx={{ mb: 2 }}
-        />
+      <Stack alignSelf="stretch">
+        <ListItemText primary={title} secondary={`by ${authorText}`} />
         <Stack direction="row">
-          <Typography
-            variant="body2"
-            whiteSpace="pre"
-            color={'rgba(0, 0, 0, 0.6)'}
-          >
+          <Typography variant="caption" whiteSpace="pre">
             {'borrowed by '}
           </Typography>
-          <Typography variant="body2" fontWeight={500}>
+          <Typography variant="caption" fontWeight={600}>
             {username}
           </Typography>
         </Stack>
-        <Typography variant="body2" color={'rgba(0, 0, 0, 0.6)'}>
+        <Typography variant="caption">
           {`${formatToLocale(borrowedDate)} (${getRelativeTimeString(borrowedDate)})`}
         </Typography>
       </Stack>
@@ -49,31 +41,31 @@ const BookRow = ({ book }) => {
   );
 };
 
+const headerStyle = {
+  pr: 2,
+  pt: 2,
+  pl: 2,
+  justifyContent: 'space-between',
+  alignItems: 'baseline',
+  flexDirection: 'row',
+  position: 'sticky',
+  top: 50, // TODO: DON'T Hard code
+  background: 'white',
+  zIndex: 1,
+};
+
 const BorrowedBooks = () => {
   const books = useLoaderData({});
   return (
     <>
       <AppHeader />
-      <Stack
-        sx={{
-          pr: 2,
-          pt: 2,
-          pl: 2,
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-          flexDirection: 'row',
-          position: 'sticky',
-          top: 50, // TODO: DON'T Hard code
-          background: 'white',
-          zIndex: 1,
-        }}
-      >
+      <Stack sx={headerStyle}>
         <Typography variant="h6">Borrowed Books</Typography>
         <Typography variant="caption">{books.length} books</Typography>
       </Stack>
       <List>
-        {books.map((book) => {
-          return <BookRow book={book} key={book.tid} />;
+        {books.map((book, i) => {
+          return <BookRow book={book} key={book.tid} index={i} />;
         })}
       </List>
     </>

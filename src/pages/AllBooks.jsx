@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useAPI from '../common/api_client';
 import { Virtuoso } from 'react-virtuoso';
 import {
@@ -9,33 +9,34 @@ import {
   ListItemAvatar,
   ListItemText,
   Snackbar,
+  Stack,
   Typography,
 } from '@mui/material';
-import { ManageAccounts, MenuBook, QrCodeScanner } from '@mui/icons-material';
+import { ManageAccounts, QrCodeScanner } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { CopyAlreadyBorrowed, CopyNotFound } from '../common/errors';
 import { useLoaderData, useNavigate } from '@tanstack/react-router';
+import BookCover from '../components/BookCover';
 
-const Row = ({ book }) => {
+const Row = ({ book, index }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
-  const isNotAvailable = book.copies === book.borrowed_count;
 
   return (
-    <ListItem>
-      <ListItemAvatar>
-        <MenuBook fontSize="large" color="primary" />
+    <ListItem alignItems="flex-start">
+      <ListItemAvatar sx={{ mr: 2, alignSelf: 'center' }}>
+        <BookCover title={book.title} index={index} author={book.authors[0]} />
       </ListItemAvatar>
-      <ListItemText
-        primary={book.title}
-        secondary={authorsText}
-        sx={{ flex: '2' }}
-      />
-      <Box alignSelf="center" textAlign={'end'} flex={'1'}>
-        {isNotAvailable && (
-          <Typography variant="caption">All Borrowed</Typography>
-        )}
-      </Box>
+      <Stack alignSelf={'stretch'}>
+        <ListItemText
+          primary={book.title}
+          secondary={authorsText}
+          sx={{ mb: 2 }}
+        />
+        <Typography variant="caption">
+          {book.copies} copies, {book.borrowed_count} borrowed
+        </Typography>
+      </Stack>
     </ListItem>
   );
 };
@@ -105,7 +106,9 @@ const AllBooks = () => {
       <Box flexGrow={1}>
         <Virtuoso
           totalCount={books.length}
-          itemContent={(index) => <Row book={books[index]} />}
+          itemContent={(index) => (
+            <Row book={books[index]} key={index} index={index} />
+          )}
         />
       </Box>
 

@@ -14,7 +14,8 @@ const auth = createAuth(firebaseAuth, authHelperAPIs);
 const api = createApiClient(auth);
 const theme = createTheme({
   palette: {
-    primary: { main: '#2F4858', contrastText: '#fff' },
+    primary: { main: '#2F4858', contrastText: '#ffffff' },
+    secondary: { main: '#c25b5b', contrastText: '#ffffff' },
     background: { default: 'white' },
     info: { main: 'rgb(76,92,115)' },
   },

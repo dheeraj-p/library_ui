@@ -9,12 +9,14 @@ import {
   ListItemAvatar,
   ListItemText,
   Snackbar,
+  Stack,
   Typography,
 } from '@mui/material';
-import { MenuBook, QrCodeScanner } from '@mui/icons-material';
-import { getRelativeTimeString } from '../common/utils/date';
+import { QrCodeScanner } from '@mui/icons-material';
+import { formatToLocale, getRelativeTimeString } from '../common/utils/date';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { useLoaderData, useNavigate } from '@tanstack/react-router';
+import BookCover from '../components/BookCover';
 
 const containerStyle = {
   height: '100%',
@@ -26,25 +28,21 @@ const containerStyle = {
 
 const fabStyle = { mr: 1, mb: 1, position: 'absolute', right: 0, bottom: 0 };
 
-const Row = ({ book }) => {
-  const authorsText = `by ${book.authors.join(', ')}`;
-  const borrowedDate = new Date(book.borrowed_on + 'Z'); //Appending Z tells Date API to parse in UTC instead of local time.
+const BookRow = ({ book, index }) => {
+  const borrowedDate = new Date(book.borrowed_on + 'Z');
+  const authorText = book.authors.join(', ');
 
   return (
-    <ListItem>
-      <ListItemAvatar>
-        <MenuBook color="primary" fontSize="large" />
+    <ListItem alignItems="flex-start">
+      <ListItemAvatar sx={{ mr: 2, alignSelf: 'center' }}>
+        <BookCover title={book.title} author={authorText} index={index} />
       </ListItemAvatar>
-      <ListItemText
-        primary={book.title}
-        secondary={authorsText}
-        sx={{ flex: 2 }}
-      />
-      <Box alignSelf="center" textAlign="end" flex={1}>
+      <Stack alignSelf="stretch">
+        <ListItemText primary={book.title} secondary={`by ${authorText}`} />
         <Typography variant="caption">
-          {getRelativeTimeString(borrowedDate)}
+          {`${formatToLocale(borrowedDate)} (${getRelativeTimeString(borrowedDate)})`}
         </Typography>
-      </Box>
+      </Stack>
     </ListItem>
   );
 };
@@ -97,7 +95,10 @@ const CurrentlyReading = () => {
       <Virtuoso
         style={{ flexGrow: 1 }}
         totalCount={books.length}
-        itemContent={(index) => <Row book={books[index]} />}
+        itemContent={(index) => {
+          const book = books[index];
+          return <BookRow book={book} index={index} key={index} />;
+        }}
         components={{
           EmptyPlaceholder: () => {
             return (
