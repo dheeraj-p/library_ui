@@ -12,15 +12,15 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^5.16.7",
-    "@mui/material": "^5.16.7",
-    "@tanstack/react-router": "^1.51.0",
+    "@mui/icons-material": "^6.0.1",
+    "@mui/material": "^6.0.1",
+    "@tanstack/react-router": "^1.52.3",
     "@yudiel/react-qr-scanner": "^2.0.8",
     "firebase": "^10.13",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-virtuoso": "^4.10.1"
+    "react-virtuoso": "^4.10.2"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.51.0",
