@@ -76,7 +76,7 @@ const AddBooksBulk = () => {
   const updateISBN10 = (v) => updateBookData({ isbn10: shorten(v.trim(), 10) });
 
   const updateAuthors = (e) => {
-    const authors = e.value.trim().split(',');
+    const authors = e.target.value.split(',');
     updateBookData({ authors });
   };
 
@@ -98,7 +98,7 @@ const AddBooksBulk = () => {
     title: bookData.title.trim(),
     isbn10: bookData.isbn10.trim(),
     isbn13: bookData.isbn13.trim(),
-    authors: bookData.authors,
+    authors: bookData.authors.map((name) => name.trim()),
   });
 
   const addBook = () => {
@@ -187,9 +187,9 @@ const AddBooksBulk = () => {
             type="number"
             value={numberOfCopies}
             fullWidth
-            inputProps={{ min: 1 }}
             sx={textFieldStyle}
             onChange={(e) => setNumberOfCopies(+e.target.value)}
+            slotProps={{ htmlInput: { min: 1 } }}
           />
         </Box>
         <Button
