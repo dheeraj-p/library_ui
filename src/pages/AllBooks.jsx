@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import useAPI from '../common/api_client';
 import { Virtuoso } from 'react-virtuoso';
 import {
@@ -16,8 +16,9 @@ import { ManageAccounts, QrCodeScanner } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { CopyAlreadyBorrowed, CopyNotFound } from '../common/errors';
-import { useLoaderData, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import BookCover from '../components/BookCover';
+import { useBookStore } from '../common/book_store';
 
 const Row = ({ book, index }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
@@ -41,10 +42,21 @@ const Row = ({ book, index }) => {
   );
 };
 
+// Not sure if it's a good idea to track the scroll position using a global variable
+let lastScrollPosition = 0;
+
+const LoadingFooter = ({ context: { isLoadingMore } }) => {
+  if (isLoadingMore)
+    return <Typography textAlign="center">Loading More...</Typography>;
+
+  return <></>;
+};
+
 const AllBooks = () => {
-  const books = useLoaderData({});
+  const store = useBookStore();
   const [isScannerOpened, setScannerOpened] = useState(false);
   const [snackbarData, setSnackbarData] = useState({ opened: false });
+  const [isLoadingMore, setLoadingMore] = useState(false);
 
   const { borrowBook } = useAPI();
   const navigate = useNavigate();
@@ -105,10 +117,34 @@ const AllBooks = () => {
     <Box display="flex" height="100%" flexDirection="column">
       <Box flexGrow={1}>
         <Virtuoso
-          totalCount={books.length}
-          itemContent={(index) => (
-            <Row book={books[index]} key={index} index={index} />
-          )}
+          data={store.getBooks()}
+          onScroll={(e) => (lastScrollPosition = e.target.scrollTop)}
+          initialScrollTop={lastScrollPosition}
+          endReached={async () => {
+            setLoadingMore(true);
+
+            /* 
+              This line doesn't cause a rerender it only loads in memory.
+              Fix it to automatically trigger rerender as well
+            */
+            await store.loadMore();
+
+            /* 
+              Below line is doing two things:
+              1. It's setting the isLoadingMore to false (Obviously)
+              2. It's triggering a rerender (obviously) which as a side effect 
+                 also causes component to take latest books from bookStore and
+                 the that is how the UI is updated
+              If you remove the below line the component won't rerender after loading more books
+              and UI won't be updated.
+            */
+            setLoadingMore(false);
+          }}
+          context={{ isLoadingMore }}
+          components={{ Footer: LoadingFooter }}
+          itemContent={(index, book) => {
+            return <Row book={book} key={book.id} index={index} />;
+          }}
         />
       </Box>
 

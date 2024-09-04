@@ -6,6 +6,8 @@ export const Route = createFileRoute('/_authenticated/_dashboard/')({
   pendingComponent: LoadingView,
   errorComponent: ErrorPlaceHolder,
   loader: ({ context }) => {
-    return context.api.getAllBooks();
+    return context.bookStore.loadMore();
   },
+  gcTime: Infinity, // Never garbage collect the loaded cache
+  shouldReload: false, //Don't reload unless explictly revalidated
 });

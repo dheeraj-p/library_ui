@@ -24,8 +24,9 @@ const getUserRole = async (token) => {
   return role;
 };
 
-const getAllBooks = async (token) => {
-  const response = await fetchWithAuth('/books', token);
+const getAllBooks = async (token, after = 0, limit = 10) => {
+  const params = new URLSearchParams({ after, limit });
+  const response = await fetchWithAuth(`/books?${params.toString()}`, token);
 
   if (!response.ok) throw new APIFailedError('Oops! Something went wrong.');
 
