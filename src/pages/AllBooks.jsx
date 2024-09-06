@@ -1,24 +1,29 @@
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
 import useAPI from '../common/api_client';
 import { Virtuoso } from 'react-virtuoso';
 import {
   Alert,
   Box,
+  debounce,
   Fab,
+  InputAdornment,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Snackbar,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
-import { ManageAccounts, QrCodeScanner } from '@mui/icons-material';
+import { ManageAccounts, QrCodeScanner, Search } from '@mui/icons-material';
 import AdminOnly from '../components/AdminOnly';
 import BarcodeScanner from '../components/BarcodeScanner';
 import { CopyAlreadyBorrowed, CopyNotFound } from '../common/errors';
 import { useNavigate } from '@tanstack/react-router';
 import BookCover from '../components/BookCover';
 import { useBookStore } from '../common/book_store';
+import { isEmpty } from '../common/utils/validators';
+import LoadingView from '../components/LoadingView';
 
 const Row = ({ book, index }) => {
   const authorsText = `by ${book.authors.join(', ')}`;
@@ -52,13 +57,52 @@ const LoadingFooter = ({ context: { isLoadingMore } }) => {
   return <></>;
 };
 
+const EmptyListPlaceholder = () => {
+  return (
+    <Stack
+      sx={{
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Typography>No books found!</Typography>
+    </Stack>
+  );
+};
+
+const BookSearchResults = ({ results, isSearching }) => {
+  if (isSearching) {
+    return <LoadingView message="Searching..." />;
+  }
+
+  return (
+    <Virtuoso
+      data={results}
+      itemContent={(index, book) => {
+        return <Row book={book} key={book.id} index={index} />;
+      }}
+      components={{ EmptyPlaceholder: EmptyListPlaceholder }}
+    />
+  );
+};
+
+const initialSearchData = {
+  showSearchResults: false,
+  isSearching: false,
+  results: [],
+};
+
 const AllBooks = () => {
   const store = useBookStore();
+
+  const [searchData, setSearchData] = useState(initialSearchData);
   const [isScannerOpened, setScannerOpened] = useState(false);
   const [snackbarData, setSnackbarData] = useState({ opened: false });
   const [isLoadingMore, setLoadingMore] = useState(false);
 
-  const { borrowBook } = useAPI();
+  const { borrowBook, searchBooks } = useAPI();
   const navigate = useNavigate();
 
   const openScanner = () => setScannerOpened(true);
@@ -113,23 +157,66 @@ const AllBooks = () => {
     navigate({ to: '/admin' });
   };
 
+  // console.log(searchData);
+  const trySearchingBooks = (e) => {
+    if (isEmpty(e.target.value)) {
+      setSearchData(initialSearchData);
+      return;
+    }
+
+    setSearchData((old) => ({
+      ...old,
+      showSearchResults: true,
+      isSearching: true,
+    }));
+
+    searchBooks(e.target.value)
+      .then((results) => {
+        setSearchData((old) => ({ ...old, results }));
+      })
+      .catch(handleError)
+      .finally(() => {
+        setSearchData((old) => ({ ...old, isSearching: false }));
+      });
+  };
+
   return (
     <Box display="flex" height="100%" flexDirection="column">
+      <TextField
+        placeholder="Search"
+        sx={{ m: 1 }}
+        onChange={debounce(trySearchingBooks, 500)}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <Search color="primary" />
+              </InputAdornment>
+            ),
+          },
+        }}
+      />
       <Box flexGrow={1}>
-        <Virtuoso
-          data={store.getBooks()}
-          onScroll={(e) => (lastScrollPosition = e.target.scrollTop)}
-          initialScrollTop={lastScrollPosition}
-          endReached={async () => {
-            setLoadingMore(true);
+        {searchData.showSearchResults ? (
+          <BookSearchResults
+            results={searchData.results}
+            isSearching={searchData.isSearching}
+          />
+        ) : (
+          <Virtuoso
+            data={store.getBooks()}
+            onScroll={(e) => (lastScrollPosition = e.target.scrollTop)}
+            initialScrollTop={lastScrollPosition}
+            endReached={async () => {
+              setLoadingMore(true);
 
-            /* 
+              /* 
               This line doesn't cause a rerender it only loads in memory.
               Fix it to automatically trigger rerender as well
             */
-            await store.loadMore();
+              await store.loadMore();
 
-            /* 
+              /* 
               Below line is doing two things:
               1. It's setting the isLoadingMore to false (Obviously)
               2. It's triggering a rerender (obviously) which as a side effect 
@@ -138,14 +225,15 @@ const AllBooks = () => {
               If you remove the below line the component won't rerender after loading more books
               and UI won't be updated.
             */
-            setLoadingMore(false);
-          }}
-          context={{ isLoadingMore }}
-          components={{ Footer: LoadingFooter }}
-          itemContent={(index, book) => {
-            return <Row book={book} key={book.id} index={index} />;
-          }}
-        />
+              setLoadingMore(false);
+            }}
+            context={{ isLoadingMore }}
+            components={{ Footer: LoadingFooter }}
+            itemContent={(index, book) => {
+              return <Row book={book} key={book.id} index={index} />;
+            }}
+          />
+        )}
       </Box>
 
       <Box alignSelf="flex-end">

@@ -24,8 +24,8 @@ const getUserRole = async (token) => {
   return role;
 };
 
-const getAllBooks = async (token, after = 0, limit = 10) => {
-  const params = new URLSearchParams({ after, limit });
+const getBooksByQuery = async (token, queryParams) => {
+  const params = new URLSearchParams(queryParams);
   const response = await fetchWithAuth(`/books?${params.toString()}`, token);
 
   if (!response.ok) throw new APIFailedError('Oops! Something went wrong.');
@@ -37,6 +37,14 @@ const getAllBooks = async (token, after = 0, limit = 10) => {
     book.authors = book.authors.split('|');
     return book;
   });
+};
+
+const getAllBooks = async (token, after = 0, limit = 10) => {
+  return getBooksByQuery(token, { after, limit });
+};
+
+const searchBooks = async (token, query) => {
+  return getBooksByQuery(token, { q: query });
 };
 
 const registerBook = async (token, data) => {
@@ -166,6 +174,7 @@ const createApiClient = (auth) => {
     fetchCopies: withAuth(fetchCopies),
     registerUser: withAuth(registerUser),
     fetchAllBorrowedBooks: withAuth(fetchAllBorrowedBooks),
+    searchBooks: withAuth(searchBooks),
     fetchBookInfo,
   };
 };
